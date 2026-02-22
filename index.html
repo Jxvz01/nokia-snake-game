@@ -4,21 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nokia Snake Game - Authentic Edition</title>
+    <title>Nokia Snake Game</title>
     <style>
-        :root {
-            --nokia-green: #9ead86;
-            --nokia-dark: #2b3324;
-            --nokia-light: #c4d1af;
-            --nokia-border: #4a543f;
-            --pixel-size: 4px;
-        }
-
-        @font-face {
-            font-family: 'Nokia';
-            src: url('https://fonts.cdnfonts.com/s/14873/nokiafc22.woff') format('woff');
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -29,335 +16,262 @@
 
         body {
             font-family: 'Courier New', monospace;
-            background: #1a1b18;
-            color: var(--nokia-dark);
+            background: linear-gradient(135deg, #4b7500 0%, #000000 100%);
+            color: #d7ff5f;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 10px;
-            overflow: hidden;
-        }
-
-        /* Phone frame look */
-        .phone-frame {
-            background: #2a2c27;
-            padding: 30px 15px 50px;
-            border-radius: 40px;
-            border: 8px solid #3d4038;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            max-width: 420px;
-            width: 100%;
-            position: relative;
-        }
-
-        .phone-frame::before {
-            content: "NOKIA";
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #555;
-            font-weight: bold;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-        }
-
-        .screen {
-            background: var(--nokia-green);
-            border: 10px solid #111;
-            padding: 5px;
-            position: relative;
-            overflow: hidden;
-            aspect-ratio: 1/1;
-            display: flex;
-            flex-direction: column;
+            overflow-x: hidden;
         }
 
         .container {
             text-align: center;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            width: 100%;
+            max-width: 500px;
         }
 
         h1 {
-            font-family: 'Nokia', monospace;
-            font-size: 2.5rem;
-            margin-top: 20px;
-            letter-spacing: 2px;
-            color: var(--nokia-dark);
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            letter-spacing: 8px;
+            text-shadow: 3px 3px 0px #000;
+            font-weight: 900;
         }
 
-        /* High Fidelity CSS Pixel Art Snake */
-        .snake-splash-container {
-            flex-grow: 1;
+        /* Splash Art (Pure CSS replacement for missing image) */
+        .splash-art {
+            width: 100%;
+            height: 180px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 3px solid #d7ff5f;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
+            border-radius: 4px;
         }
 
         .pixel-snake {
-            width: 80px;
-            height: 80px;
-            position: relative;
-            /* Head and body segments using box shadows */
-            background: var(--nokia-dark);
+            width: 50px;
+            height: 50px;
+            background: #d7ff5f;
             box-shadow:
-                20px 0 0 var(--nokia-dark), 40px 0 0 var(--nokia-dark),
-                40px 20px 0 var(--nokia-dark), 40px 40px 0 var(--nokia-dark),
-                20px 40px 0 var(--nokia-dark), 0 40px 0 var(--nokia-dark),
-                0 60px 0 var(--nokia-dark), 0 80px 0 var(--nokia-dark),
-                20px 80px 0 var(--nokia-dark), 40px 80px 0 var(--nokia-dark),
-                60px 80px 0 var(--nokia-dark);
-            animation: slither 2s infinite steps(4);
+                25px 0 0 #d7ff5f, 50px 0 0 #d7ff5f,
+                50px 25px 0 #d7ff5f, 50px 50px 0 #d7ff5f,
+                25px 50px 0 #d7ff5f, 0 50px 0 #d7ff5f,
+                0 75px 0 #d7ff5f;
+            animation: float 2s infinite ease-in-out;
         }
 
-        @keyframes slither {
+        @keyframes float {
 
             0%,
             100% {
-                transform: translate(-10px, 0);
+                transform: translateY(0);
             }
 
             50% {
-                transform: translate(10px, 0);
+                transform: translateY(-10px);
             }
         }
 
-        .menu-footer {
-            padding-bottom: 20px;
-        }
-
         .play-btn {
-            background: var(--nokia-dark);
-            color: var(--nokia-green);
+            background: #d7ff5f;
+            color: #000;
             border: none;
-            padding: 12px 24px;
-            font-family: 'Nokia', monospace;
-            font-size: 1.2rem;
+            padding: 20px 40px;
+            font-size: 1.6rem;
+            font-weight: bold;
+            font-family: inherit;
             cursor: pointer;
-            width: 80%;
-            transition: opacity 0.2s;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: all 0.1s;
+            box-shadow: 0 6px 0 #2a4300;
+            margin-bottom: 15px;
         }
 
         .play-btn:active {
-            opacity: 0.7;
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 #2a4300;
         }
 
-        .settings-link {
-            font-size: 0.8rem;
-            margin-top: 10px;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-
-        #settingsScreen {
-            display: none;
-            padding: 10px;
-            text-align: left;
-        }
-
-        .setting-row {
+        /* Settings */
+        .settings {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            font-family: 'Nokia', monospace;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
             font-size: 0.9rem;
         }
 
         select {
             background: transparent;
-            border: 1px solid var(--nokia-dark);
-            color: var(--nokia-dark);
+            color: #d7ff5f;
+            border: 1px solid #d7ff5f;
+            padding: 5px;
             font-family: inherit;
         }
 
-        /* Game UI */
+        /* Game View */
         #gameView {
             display: none;
+            width: 100%;
             flex-direction: column;
-            height: 100%;
+            align-items: center;
         }
 
         .game-header {
+            width: 100%;
             display: flex;
             justify-content: space-between;
-            font-family: 'Nokia', monospace;
-            font-size: 0.8rem;
-            border-bottom: 1px solid var(--nokia-dark);
-            padding-bottom: 2px;
-            margin-bottom: 5px;
+            padding: 15px;
+            font-size: 1.4rem;
+            font-weight: bold;
         }
 
         #gameCanvas {
             width: 100%;
-            flex-grow: 1;
-            background: var(--nokia-green);
+            max-width: 400px;
+            aspect-ratio: 1/1;
+            background: #000;
+            border: 4px solid #d7ff5f;
             touch-action: none;
-            image-rendering: pixelated;
         }
 
-        /* Authentic Game Over */
-        #gameOverOverlay {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--nokia-green);
-            z-index: 10;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        #gameOverOverlay h2 {
-            font-family: 'Nokia', monospace;
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-        }
-
-        .final-score {
-            font-family: 'Nokia', monospace;
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-        }
-
-        /* Keypad controls */
-        .keypad {
+        /* Mobile Controls */
+        .mobile-controls {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 25px;
-            justify-items: center;
+            grid-template-areas:
+                ". up ."
+                "left . right"
+                ". down .";
+            gap: 15px;
+            margin-top: 30px;
         }
 
-        .key {
-            width: 50px;
-            height: 40px;
-            background: #444;
-            border-radius: 10px;
-            border-bottom: 3px solid #222;
+        .ctrl-btn {
+            width: 70px;
+            height: 70px;
+            background: rgba(215, 255, 95, 0.1);
+            border: 3px solid #d7ff5f;
+            color: #d7ff5f;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #aaa;
-            font-weight: bold;
-            font-size: 0.8rem;
+            font-size: 2rem;
+            border-radius: 50%;
             cursor: pointer;
         }
 
-        .key:active {
-            transform: translateY(2px);
-            border-bottom-width: 1px;
+        .ctrl-btn:active {
+            background: #d7ff5f;
+            color: #000;
         }
 
-        /* Arrow mapping */
-        .key.up {
-            grid-column: 2;
-            grid-row: 1;
+        .up {
+            grid-area: up;
         }
 
-        .key.left {
-            grid-column: 1;
-            grid-row: 2;
+        .down {
+            grid-area: down;
         }
 
-        .key.right {
-            grid-column: 3;
-            grid-row: 2;
+        .left {
+            grid-area: left;
         }
 
-        .key.down {
-            grid-column: 2;
-            grid-row: 2;
+        .right {
+            grid-area: right;
         }
 
-        .key.center {
-            grid-column: 2;
-            grid-row: 2;
-            background: #555;
-            visibility: hidden;
+        /* Game Over */
+        #gameOverOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
 
-        @media (min-width: 768px) {
-            .keypad {
-                display: grid;
-            }
+        #gameOverOverlay h2 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #d7ff5f;
+            text-shadow: 0 0 20px rgba(215, 255, 95, 0.5);
+        }
+
+        .final-score {
+            font-size: 2rem;
+            margin-bottom: 40px;
         }
     </style>
 </head>
 
 <body>
-    <div class="phone-frame">
-        <div class="screen">
-            <!-- Menu Screen -->
-            <div class="container" id="menuScreen">
-                <h1>SNAKE</h1>
-                <div class="snake-splash-container">
-                    <div class="pixel-snake"></div>
-                </div>
-                <div class="menu-footer">
-                    <button class="play-btn" id="playBtn">Play</button>
-                    <div class="settings-link" id="settingsBtn">Settings</div>
-                </div>
-            </div>
+    <!-- Menu Screen -->
+    <div class="container" id="menuScreen">
+        <h1>SNAKE</h1>
+        <div class="splash-art">
+            <div class="pixel-snake"></div>
+        </div>
 
-            <!-- Settings Screen -->
-            <div class="container" id="settingsScreen">
-                <h2 style="font-family: 'Nokia'; margin-bottom: 20px;">Settings</h2>
-                <div class="setting-row">
-                    <span>Level</span>
-                    <select id="levelSelect">
-                        <option value="classic">Classic</option>
-                        <option value="teleport">Teleport</option>
-                        <option value="reverse">Inverted</option>
-                        <option value="walls">Obstacles</option>
-                    </select>
-                </div>
-                <div class="setting-row">
-                    <span>Speed</span>
-                    <select id="speedSelect">
-                        <option value="easy">Normal</option>
-                        <option value="medium" selected>Fast</option>
-                        <option value="impossible">Legendary</option>
-                    </select>
-                </div>
-                <button class="play-btn" id="backToMenuBtn" style="margin-top: auto;">Back</button>
+        <div class="settings">
+            <div>
+                Level:
+                <select id="levelSelect">
+                    <option value="classic">Classic</option>
+                    <option value="teleport">Teleport</option>
+                    <option value="walls">Obstacles</option>
+                </select>
             </div>
-
-            <!-- Game View -->
-            <div id="gameView">
-                <div class="game-header">
-                    <span id="scoreVal">0</span>
-                    <span id="highScore">0</span>
-                </div>
-                <canvas id="gameCanvas" width="300" height="300"></canvas>
-            </div>
-
-            <!-- Authentic Game Over Overlay -->
-            <div id="gameOverOverlay">
-                <h2>Game over!</h2>
-                <div class="final-score">Score: <span id="finalScoreVal">0</span></div>
-                <button class="play-btn" id="restartBtn">Continue</button>
+            <div>
+                Speed:
+                <select id="speedSelect">
+                    <option value="easy">Easy</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="impossible">Expert</option>
+                </select>
             </div>
         </div>
 
-        <!-- Physical Keypad Emulation -->
-        <div class="keypad">
-            <div></div> <!-- Spacer -->
-            <div class="key up" id="ctrlUp">2</div>
-            <div></div> <!-- Spacer -->
-            <div class="key left" id="ctrlLeft">4</div>
-            <div class="key down" id="ctrlDown">8</div>
-            <div class="key right" id="ctrlRight">6</div>
+        <button class="play-btn" id="playBtn">START</button>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameView">
+        <div class="game-header">
+            <span>SCORE: <span id="scoreVal">0</span></span>
+            <span>HIGH: <span id="highScore">0</span></span>
         </div>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+        <div class="mobile-controls">
+            <div class="ctrl-btn up" id="ctrlUp">▲</div>
+            <div class="ctrl-btn left" id="ctrlLeft">◀</div>
+            <div class="ctrl-btn right" id="ctrlRight">▶</div>
+            <div class="ctrl-btn down" id="ctrlDown">▼</div>
+        </div>
+    </div>
+
+    <!-- Authentic Game Over -->
+    <div id="gameOverOverlay">
+        <h2>Game over!</h2>
+        <div class="final-score">Score: <span id="finalScoreVal">0</span></div>
+        <button class="play-btn" id="restartBtn" style="max-width: 300px;">Play Again</button>
     </div>
 
     <script>
@@ -366,13 +280,12 @@
         const scoreEl = document.getElementById('scoreVal');
         const highScoreEl = document.getElementById('highScore');
         const menuScreen = document.getElementById('menuScreen');
-        const settingsScreen = document.getElementById('settingsScreen');
         const gameView = document.getElementById('gameView');
         const gameOverOverlay = document.getElementById('gameOverOverlay');
         const finalScoreVal = document.getElementById('finalScoreVal');
 
-        const gridSize = 15;
-        let tileCount = 20; // 300 / 15
+        const gridSize = 20;
+        let tileCount = 20;
 
         let snake = [];
         let food = { x: 5, y: 5 };
@@ -384,7 +297,7 @@
         let highScore = localStorage.getItem('nokiaSnakeHighScore') || 0;
         let gameRunning = false;
         let level = 'classic';
-        let speed = 100;
+        let speed = 120;
         let gameLoop = null;
 
         const obstacles = [
@@ -394,22 +307,12 @@
 
         highScoreEl.textContent = highScore;
 
-        // --- Event Listeners ---
         document.getElementById('playBtn').addEventListener('click', initGame);
         document.getElementById('restartBtn').addEventListener('click', () => {
             gameOverOverlay.style.display = 'none';
-            menuScreen.style.display = 'flex';
-        });
-        document.getElementById('settingsBtn').addEventListener('click', () => {
-            menuScreen.style.display = 'none';
-            settingsScreen.style.display = 'flex';
-        });
-        document.getElementById('backToMenuBtn').addEventListener('click', () => {
-            settingsScreen.style.display = 'none';
-            menuScreen.style.display = 'flex';
+            initGame();
         });
 
-        // Keyboard
         window.addEventListener('keydown', e => {
             if (!gameRunning) return;
             if (e.key === 'ArrowUp') setDir(0, -1);
@@ -418,7 +321,6 @@
             if (e.key === 'ArrowRight') setDir(1, 0);
         });
 
-        // Keypad buttons
         const attachKey = (id, nx, ny) => {
             const el = document.getElementById(id);
             el.addEventListener('touchstart', (e) => { e.preventDefault(); setDir(nx, ny); });
@@ -429,17 +331,7 @@
         attachKey('ctrlLeft', -1, 0);
         attachKey('ctrlRight', 1, 0);
 
-        // Swipe
-        let tX = 0, tY = 0;
-        canvas.addEventListener('touchstart', e => { tX = e.touches[0].clientX; tY = e.touches[0].clientY; }, { passive: false });
-        canvas.addEventListener('touchend', e => {
-            const dX = e.changedTouches[0].clientX - tX, dY = e.changedTouches[0].clientY - tY;
-            if (Math.abs(dX) > Math.abs(dY)) { if (Math.abs(dX) > 20) setDir(dX > 0 ? 1 : -1, 0); }
-            else { if (Math.abs(dY) > 20) setDir(0, dY > 0 ? 1 : -1); }
-        }, { passive: false });
-
         function setDir(nx, ny) {
-            if (level === 'reverse') { nx = -nx; ny = -ny; }
             if (nx !== 0 && dx !== -nx) { nextDx = nx; nextDy = 0; }
             else if (ny !== 0 && dy !== -ny) { nextDx = 0; nextDy = ny; }
         }
@@ -447,7 +339,7 @@
         function initGame() {
             level = document.getElementById('levelSelect').value;
             const sChoice = document.getElementById('speedSelect').value;
-            speed = sChoice === 'easy' ? 120 : (sChoice === 'medium' ? 80 : 50);
+            speed = sChoice === 'easy' ? 150 : (sChoice === 'medium' ? 100 : 60);
 
             score = 0; scoreEl.textContent = '0';
             dx = 1; dy = 0; nextDx = 1; nextDy = 0;
@@ -490,35 +382,34 @@
 
             snake.unshift(head);
             if (head.x === food.x && head.y === food.y) {
-                score++; scoreEl.textContent = score;
+                score += 10; scoreEl.textContent = score;
                 if (score > highScore) { highScore = score; highScoreEl.textContent = highScore; localStorage.setItem('nokiaSnakeHighScore', highScore); }
                 spawnFood();
             } else snake.pop();
         }
 
         function draw() {
-            ctx.fillStyle = '#9ead86';
+            ctx.fillStyle = '#111';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Food (classic pixel dot)
-            ctx.fillStyle = '#2b3324';
-            ctx.fillRect(food.x * gridSize + 2, food.y * gridSize + 2, gridSize - 4, gridSize - 4);
+            // Food
+            ctx.fillStyle = '#d7ff5f';
+            ctx.beginPath();
+            ctx.arc(food.x * gridSize + gridSize / 2, food.y * gridSize + gridSize / 2, gridSize / 2 - 2, 0, Math.PI * 2);
+            ctx.fill();
 
             // Obstacles
             if (level === 'walls') {
+                ctx.fillStyle = '#444';
                 obstacles.forEach(o => {
                     ctx.fillRect(o.x * gridSize + 1, o.y * gridSize + 1, gridSize - 2, gridSize - 2);
-                    ctx.clearRect(o.x * gridSize + 4, o.y * gridSize + 4, gridSize - 8, gridSize - 8);
                 });
             }
 
             // Snake
             snake.forEach((s, i) => {
-                ctx.fillStyle = '#2b3324';
+                ctx.fillStyle = i === 0 ? '#d7ff5f' : '#888';
                 ctx.fillRect(s.x * gridSize + 1, s.y * gridSize + 1, gridSize - 2, gridSize - 2);
-                if (i === 0) {
-                    // head detail if desired, but original was solid
-                }
             });
         }
 
@@ -526,7 +417,6 @@
             gameRunning = false;
             finalScoreVal.textContent = score;
             gameOverOverlay.style.display = 'flex';
-            gameView.style.display = 'none';
         }
     </script>
 </body>
