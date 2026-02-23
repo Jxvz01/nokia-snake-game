@@ -4,20 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Retro Snake - Nokia 3310 Edition</title>
-    <!-- Importing pixel fonts for that authentic feel -->
+    <title>Snake II – Nokia 3310</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --nokia-blue: #1c3d5a;
-            --nokia-silver: #c0c0c0;
-            --lcd-green: #94af10;
-            --lcd-dark: #2b3a1a;
-            --btn-grey: #3a3a3a;
-            --btn-dark: #1a1a1a;
-        }
-
-        * {
+        /* ── Reset & Base ────────────────────────────────── */
+        *,
+        *::before,
+        *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -26,376 +19,184 @@
         }
 
         body {
-            background-color: #0f0f0f;
-            background-image:
-                radial-gradient(#333 1px, transparent 1px),
-                linear-gradient(to bottom, #111, #000);
-            background-size: 20px 20px, 100% 100%;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
+            background: #111;
+            background-image: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #0a0a0a 100%);
             font-family: 'VT323', monospace;
-            overflow: hidden;
             color: #fff;
-            perspective: 1200px;
+            overflow: hidden;
         }
 
-        .phone-container {
+        /* ── Phone Wrapper (3D tilt) ─────────────────────── */
+        .phone-wrap {
             position: relative;
-            transform: rotateX(5deg) rotateY(-5deg);
-            filter: drop-shadow(0 40px 100px rgba(0, 0, 0, 0.8));
+            transform: perspective(900px) rotateX(4deg) rotateY(-3deg);
+            filter: drop-shadow(0 60px 80px rgba(0, 0, 0, 0.95));
         }
 
-        .phone-shadow {
-            position: absolute;
-            bottom: -60px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 300px;
-            height: 40px;
-            background: rgba(0, 0, 0, 0.6);
-            filter: blur(25px);
-            border-radius: 50%;
-            z-index: -1;
-        }
-
-        /* The Ultra-Premium Nokia 3310 Shell */
-        .nokia-3310 {
+        /* ── Nokia 3310 Body ─────────────────────────────── */
+        .phone {
             position: relative;
-            width: 360px;
-            height: 700px;
-            background: linear-gradient(135deg, #244b6d 0%, #1c3d5a 50%, #152e44 100%);
-            border-radius: 60px 60px 140px 140px;
+            width: 340px;
+            background: linear-gradient(160deg, #2a567a 0%, #1a3d58 40%, #0f2840 100%);
+            border-radius: 54px 54px 130px 130px;
+            border: 3px solid #081828;
             box-shadow:
-                0 50px 100px rgba(0, 0, 0, 0.9),
-                inset 0 10px 15px rgba(255, 255, 255, 0.1),
-                inset 0 -15px 40px rgba(0, 0, 0, 0.7),
-                0 0 0 4px #0a1a2a;
+                inset 0 6px 16px rgba(255, 255, 255, 0.12),
+                inset 0 -20px 40px rgba(0, 0, 0, 0.6),
+                0 0 0 1px #1a3d58;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 30px;
-            perspective: 1000px;
-            overflow: hidden;
+            padding: 22px 20px 28px;
+            gap: 0;
+            overflow: visible;
         }
 
-        /* Plastic Texture Overlay */
-        .nokia-3310::after {
+        /* Sheen highlight across the top of the body */
+        .phone::before {
             content: "";
             position: absolute;
             top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            opacity: 0.04;
+            left: 10%;
+            width: 80%;
+            height: 50%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.08), transparent);
+            border-radius: 54px 54px 0 0;
             pointer-events: none;
-            z-index: 2;
         }
 
-        /* Ambient Screen Glow */
-        .nokia-3310::before {
+        /* Green ambient glow behind the screen */
+        .phone::after {
             content: "";
             position: absolute;
-            top: 100px;
-            width: 280px;
-            height: 220px;
-            background: rgba(148, 175, 16, 0.2);
-            filter: blur(40px);
-            border-radius: 20px;
-            z-index: 1;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 260px;
+            height: 180px;
+            background: rgba(148, 175, 16, 0.18);
+            filter: blur(35px);
+            border-radius: 50%;
             pointer-events: none;
-            animation: backlight-pulse 4s infinite alternate;
+            animation: glow-pulse 3s ease-in-out infinite alternate;
         }
 
-        @keyframes backlight-pulse {
+        @keyframes glow-pulse {
             from {
-                opacity: 0.3;
-                transform: scale(0.95);
+                opacity: .4;
+                transform: translateX(-50%) scale(.9);
             }
 
             to {
-                opacity: 0.8;
-                transform: scale(1.05);
+                opacity: .9;
+                transform: translateX(-50%) scale(1.1);
             }
         }
 
+        /* ── Speaker Grill ───────────────────────────────── */
         .speaker {
             display: flex;
             gap: 5px;
-            margin-top: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 14px;
+            z-index: 2;
         }
 
         .speaker-hole {
-            width: 6px;
-            height: 20px;
-            background: #0a0a0a;
+            width: 5px;
+            height: 18px;
+            background: #050e18;
             border-radius: 3px;
-            box-shadow: inset 0 2px 5px #000;
+            box-shadow: inset 0 2px 4px #000;
         }
 
+        /* ── Screen Bezel ────────────────────────────────── */
         .screen-bezel {
-            width: 300px;
-            height: 230px;
-            background: #0d0d0d;
-            border-radius: 15px;
-            padding: 14px;
+            width: 286px;
+            background: #0a0a0a;
+            border-radius: 12px;
+            padding: 10px;
             box-shadow:
-                inset 0 4px 15px #000,
-                0 0 0 5px #2c4c6a,
-                0 8px 20px rgba(0, 0, 0, 0.8),
-                0 1px 1px rgba(255, 255, 255, 0.2);
-            position: relative;
-            margin-bottom: 35px;
-            border: 1px solid #333;
+                0 0 0 4px #1e4060,
+                0 0 0 5px #0a1a2a,
+                inset 0 4px 14px rgba(0, 0, 0, 0.9),
+                0 6px 18px rgba(0, 0, 0, 0.7);
+            border: 1px solid #222;
             z-index: 5;
+            margin-bottom: 14px;
         }
 
-        .screen-glass {
+        /* ── LCD Screen ──────────────────────────────────── */
+        .screen {
             width: 100%;
-            height: 100%;
-            background: var(--lcd-green);
-            border: 2px solid #000;
+            height: 190px;
+            background: #8fa808;
+            border: 1.5px solid #1a2a05;
+            border-radius: 4px;
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.3);
-            animation: lcd-flicker 10s infinite;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.25);
         }
 
-        .screen-glass::before {
+        /* Glass sheen */
+        .screen::before {
             content: "";
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 50%, rgba(0, 0, 0, 0.2) 100%);
-            z-index: 20;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 45%, rgba(0, 0, 0, 0.1) 100%);
+            z-index: 30;
             pointer-events: none;
-            border-radius: 2px;
         }
 
+        /* Pixel grid overlay */
+        .screen::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+            background-size: 3px 3px;
+            z-index: 25;
+            pointer-events: none;
+        }
+
+        /* LCD flicker */
         @keyframes lcd-flicker {
 
             0%,
-            48%,
-            52%,
+            49%,
+            51%,
             100% {
                 opacity: 1;
             }
 
             50% {
-                opacity: 0.97;
+                opacity: .96;
             }
         }
 
-        .screen-glass::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: linear-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
-            background-size: 2px 2px;
-            pointer-events: none;
-            z-index: 10;
+        .screen {
+            animation: lcd-flicker 8s infinite;
         }
 
+        /* ── Game UI Screens ─────────────────────────────── */
         #gameArea {
             width: 100%;
             height: 100%;
-            padding: 6px;
-            display: flex;
-            flex-direction: column;
-            color: var(--lcd-dark);
             position: relative;
-        }
-
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.2rem;
-            border-bottom: 1px solid var(--lcd-dark);
-            padding-bottom: 2px;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .status-icons {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .battery-icon {
-            width: 14px;
-            height: 8px;
-            border: 1.5px solid var(--lcd-dark);
-            position: relative;
-        }
-
-        .battery-icon::after {
-            content: "";
-            position: absolute;
-            right: -3px;
-            top: 1px;
-            width: 2px;
-            height: 3px;
-            background: var(--lcd-dark);
-        }
-
-        .battery-fill {
-            height: 100%;
-            width: 90%;
-            background: var(--lcd-dark);
-            transition: width 0.5s;
-        }
-
-        .signal-icon {
-            display: flex;
-            gap: 1.5px;
-            align-items: flex-end;
-            height: 8px;
-        }
-
-        .signal-bar {
-            width: 2px;
-            background: var(--lcd-dark);
-            transition: opacity 0.3s;
-        }
-
-        canvas {
-            width: 100%;
-            height: 100%;
-            image-rendering: pixelated;
-        }
-
-        .keypad-container {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .nav-cluster {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr 1fr;
-            gap: 10px;
-            padding: 0 10px;
-            align-items: center;
-        }
-
-        .arrow-keys {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: center;
-        }
-
-        /* Nokia Brand Badge */
-        .nokia-badge {
-            font-family: sans-serif;
-            font-weight: 900;
-            font-size: 0.65rem;
-            letter-spacing: 4px;
-            color: rgba(255, 255, 255, 0.3);
-            text-align: center;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        /* Separator between screen and keys */
-        .keypad-separator {
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.08), transparent);
-            margin-bottom: 5px;
-        }
-
-        .nav-key {
-            background: linear-gradient(to bottom, #4a4a4a, #2a2a2a);
-            border: none;
-            cursor: pointer;
-            box-shadow:
-                0 6px 0 #000,
-                inset 0 2px 3px rgba(255, 255, 255, 0.1),
-                0 12px 25px rgba(0, 0, 0, 0.5);
-            color: #ddd;
-            font-family: inherit;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.05s;
-            z-index: 10;
-        }
-
-        .btn-c {
-            width: 70px;
-            height: 48px;
-            border-radius: 40% 10% 40% 10%;
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #fff;
-            background: linear-gradient(135deg, #555, #333);
-        }
-
-        .btn-select {
-            height: 75px;
-            background: linear-gradient(to bottom, #fdfdfd, #bbb);
-            border-radius: 35% 35% 50% 50%;
-            box-shadow: 0 8px 0 #777, inset 0 3px 6px #fff, 0 0 0 4px rgba(148, 175, 16, 0.4);
-            border: 1px solid #aaa;
-        }
-
-        .arrow-key {
-            width: 75px;
-            height: 40px;
-            border-radius: 12px;
-            font-size: 1.3rem;
-        }
-
-        .btn-num {
-            height: 55px;
-            background: linear-gradient(to bottom, #444, #222);
-            color: #fff;
-            border-radius: 25px;
-            border: 1px solid #1a1a1a;
-            box-shadow:
-                0 6px 0 #000,
-                inset 0 1px 2px rgba(255, 255, 255, 0.2),
-                0 10px 20px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-family: inherit;
-            cursor: pointer;
-            font-size: 1.3rem;
-        }
-
-        .btn-num span {
-            font-size: 0.75rem;
-            color: #888;
-            margin-top: -2px;
-            letter-spacing: 1px;
-        }
-
-        .nav-key:active,
-        .btn-num:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #000;
-        }
-
-        .nav-key.active-glow,
-        .btn-num.active-glow {
-            background: #666;
-            box-shadow: 0 0 20px rgba(148, 175, 16, 0.4);
+            z-index: 5;
         }
 
         .ui-screen {
@@ -403,480 +204,601 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            width: 100%;
             height: 100%;
-            text-align: center;
+            padding: 6px;
+            color: #1a2a05;
         }
 
         .ui-screen.active {
             display: flex;
         }
 
-        .nokia-hands-svg {
-            width: 220px;
-            height: 120px;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+        /* ── Splash Screen ───────────────────────────────── */
+        #splashScreen {
+            background: #8fa808;
+            gap: 4px;
         }
 
-        .hand-path {
-            fill: var(--lcd-dark);
-            stroke: var(--lcd-dark);
-            stroke-width: 0.2px;
+        .hands-svg {
+            width: 200px;
+            height: 100px;
+            overflow: visible;
         }
 
-        .hand-l {
-            transform: translate(-150px, -20px);
-            animation: hand-meet-l 3s forwards cubic-bezier(0.4, 0, 0.2, 1);
+        .hand-left {
+            animation: slide-in-left 2.5s cubic-bezier(.22, .61, .36, 1) forwards;
         }
 
-        .hand-r {
-            transform: translate(150px, 20px);
-            animation: hand-meet-r 3s forwards cubic-bezier(0.4, 0, 0.2, 1);
+        .hand-right {
+            animation: slide-in-right 2.5s cubic-bezier(.22, .61, .36, 1) forwards;
         }
 
-        @keyframes hand-meet-l {
-            to {
-                transform: translate(0, 0);
+        @keyframes slide-in-left {
+            0% {
+                transform: translateX(-130px);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(0);
             }
         }
 
-        @keyframes hand-meet-r {
-            to {
-                transform: translate(0, 0);
+        @keyframes slide-in-right {
+            0% {
+                transform: translateX(130px);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(0);
             }
         }
 
-        .logo-text {
-            font-family: sans-serif;
+        .nokia-logo {
+            font-family: Arial Black, sans-serif;
             font-weight: 900;
-            font-size: 3.5rem;
-            letter-spacing: 14px;
-            color: var(--lcd-dark);
+            font-size: 2.4rem;
+            letter-spacing: 10px;
+            color: #1a2a05;
             opacity: 0;
-            animation: fade-in 1s 2s forwards;
-            scale: 0.9;
+            animation: logo-appear .6s ease 2.1s forwards;
         }
 
-        @keyframes fade-in {
+        @keyframes logo-appear {
+            from {
+                opacity: 0;
+                transform: scale(.85);
+            }
+
             to {
                 opacity: 1;
-                scale: 1;
+                transform: scale(1);
             }
+        }
+
+        /* ── Menu Screen ─────────────────────────────────── */
+        #menuScreen {
+            gap: 2px;
+            background: #8fa808;
         }
 
         .menu-title {
-            font-size: 2.8rem;
-            margin-bottom: 5px;
-        }
-
-        .menu-options {
-            list-style: none;
-            font-size: 1.6rem;
-            width: 100%;
-        }
-
-        .menu-options li {
-            padding: 2px 0;
-        }
-
-        .menu-options li.selected {
-            background: var(--lcd-dark);
-            color: var(--lcd-green);
-        }
-
-        .record-banner {
-            color: #fff;
-            background: var(--lcd-dark);
-            padding: 2px 10px;
+            font-size: 2.4rem;
             font-weight: bold;
-            margin-bottom: 5px;
+            border-bottom: 2px solid #1a2a05;
+            width: 100%;
+            text-align: center;
+            padding-bottom: 2px;
+            margin-bottom: 4px;
+        }
+
+        .menu-list {
+            list-style: none;
+            width: 100%;
+            font-size: 1.4rem;
+        }
+
+        .menu-list li {
+            padding: 1px 6px;
+        }
+
+        .menu-list li.selected {
+            background: #1a2a05;
+            color: #8fa808;
+        }
+
+        /* ── Game Status Bar ─────────────────────────────── */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1rem;
+            border-bottom: 1px solid #1a2a05;
+            padding: 2px 4px;
+            color: #1a2a05;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .signal-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 1px;
+            height: 8px;
+        }
+
+        .signal-bar {
+            width: 2.5px;
+            background: #1a2a05;
+        }
+
+        .battery {
+            width: 14px;
+            height: 7px;
+            border: 1.5px solid #1a2a05;
+            border-radius: 1px;
+            position: relative;
+            margin-left: 4px;
+        }
+
+        .battery::after {
+            content: "";
+            position: absolute;
+            right: -4px;
+            top: 1px;
+            width: 2px;
+            height: 3px;
+            background: #1a2a05;
+            border-radius: 0 1px 1px 0;
+        }
+
+        .battery-fill {
+            height: 100%;
+            width: 90%;
+            background: #1a2a05;
+            transition: width .5s;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            flex: 1;
+            image-rendering: pixelated;
+        }
+
+        /* Game Over Screen */
+        #gameOverScreen {
+            background: #8fa808;
+            gap: 6px;
+        }
+
+        .go-title {
+            font-size: 2.2rem;
+        }
+
+        .go-score {
+            font-size: 1.6rem;
+        }
+
+        .go-hint {
+            font-size: 1.1rem;
+            margin-top: 4px;
+        }
+
+        .new-record {
+            background: #1a2a05;
+            color: #8fa808;
+            padding: 1px 8px;
+            font-size: 1.3rem;
             display: none;
         }
 
-        .game-over-title {
-            font-size: 2.2rem;
+        /* Pause overlay */
+        #pauseOverlay {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #8fa808;
+            border: 2px solid #1a2a05;
+            padding: 4px 14px;
+            font-size: 1.5rem;
+            color: #1a2a05;
+            z-index: 50;
+            font-weight: bold;
+        }
+
+        /* ── Nokia Brand Strip ───────────────────────────── */
+        .brand-strip {
+            font-family: Arial Black, sans-serif;
+            font-weight: 900;
+            font-size: 0.6rem;
+            letter-spacing: 5px;
+            color: rgba(255, 255, 255, 0.22);
+            margin: 6px 0 4px;
+            text-transform: uppercase;
+            z-index: 2;
+        }
+
+        /* ── Nav Divider ─────────────────────────────────── */
+        .nav-divider {
+            width: 90%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
             margin-bottom: 10px;
+        }
+
+        /* ── Navigation Cluster ──────────────────────────── */
+        .nav-cluster {
+            display: grid;
+            grid-template-columns: 80px 1fr 80px;
+            gap: 8px;
+            width: 100%;
+            align-items: center;
+            margin-bottom: 10px;
+            z-index: 2;
+        }
+
+        /* C button */
+        .btn-c {
+            width: 72px;
+            height: 46px;
+            background: linear-gradient(145deg, #4a4a4a, #252525);
+            border: 1px solid #111;
+            border-radius: 14px 4px 14px 4px;
+            box-shadow: 0 5px 0 #111, inset 0 1px 2px rgba(255, 255, 255, 0.12);
+            color: #fff;
+            font-family: 'VT323', monospace;
+            font-size: 1.4rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform .06s, box-shadow .06s;
+        }
+
+        .btn-c:active,
+        .btn-c.pressed {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #111;
+        }
+
+        /* Select oval button */
+        .btn-select {
+            height: 72px;
+            background: linear-gradient(to bottom, #f5f5f5, #b0b0b0);
+            border: 1px solid #888;
+            border-radius: 50%;
+            box-shadow: 0 7px 0 #666, inset 0 3px 6px #fff, 0 0 0 3px rgba(148, 175, 16, 0.35);
+            cursor: pointer;
+            transition: transform .06s, box-shadow .06s;
+        }
+
+        .btn-select:active,
+        .btn-select.pressed {
+            transform: translateY(5px);
+            box-shadow: 0 2px 0 #666, inset 0 3px 6px #fff;
+        }
+
+        /* Arrow keys column */
+        .arrow-col {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .btn-arrow {
+            width: 72px;
+            height: 36px;
+            background: linear-gradient(to bottom, #444, #252525);
+            border: 1px solid #111;
+            border-radius: 10px;
+            box-shadow: 0 5px 0 #111, inset 0 1px 2px rgba(255, 255, 255, 0.1);
+            color: #ccc;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform .06s, box-shadow .06s;
+            font-family: 'VT323', monospace;
+        }
+
+        .btn-arrow:active,
+        .btn-arrow.pressed {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #111;
+        }
+
+        /* ── Number Pad ──────────────────────────────────── */
+        .num-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+            z-index: 2;
+        }
+
+        .btn-num {
+            height: 50px;
+            background: linear-gradient(to bottom, #3e3e3e, #1e1e1e);
+            border: 1px solid #111;
+            border-radius: 22px;
+            box-shadow: 0 5px 0 #000, inset 0 1px 3px rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            transition: transform .06s, box-shadow .06s;
+        }
+
+        .btn-num sub {
+            font-size: 0.65rem;
+            color: #888;
+            letter-spacing: 0.5px;
+            display: block;
+        }
+
+        .btn-num:active,
+        .btn-num.pressed {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #000;
+        }
+
+        .btn-num.lit,
+        .btn-arrow.lit,
+        .btn-c.lit,
+        .btn-select.lit {
+            box-shadow: 0 0 12px rgba(148, 175, 16, 0.6) !important;
+            filter: brightness(1.3);
         }
     </style>
 </head>
 
 <body>
-    <div class="phone-container">
-        <div class="phone-shadow"></div>
-        <div class="nokia-3310">
+    <div class="phone-wrap">
+        <div class="phone">
+
+            <!-- Speaker -->
             <div class="speaker">
+                <div class="speaker-hole"></div>
+                <div class="speaker-hole"></div>
                 <div class="speaker-hole"></div>
                 <div class="speaker-hole"></div>
                 <div class="speaker-hole"></div>
             </div>
 
+            <!-- Screen -->
             <div class="screen-bezel">
-                <div class="screen-glass">
+                <div class="screen">
                     <div id="gameArea">
-                        <!-- Splash Screen -->
+
+                        <!-- Splash -->
                         <div id="splashScreen" class="ui-screen active">
-                            <svg class="nokia-hands-svg" viewBox="0 0 240 120">
-                                <!-- High-Detail Anatomical Left Hand -->
-                                <g class="hand-l">
-                                    <path class="hand-path"
-                                        d="M10 60 C30 40 70 35 100 55 L140 70 L125 85 C90 75 40 85 10 75 Z" />
-                                    <path class="hand-path" d="M100 55 C115 40 135 45 140 60 C145 75 130 85 115 80 Z" />
-                                    <path class="hand-path" d="M140 70 L170 80 C180 85 180 100 165 105 L140 95 Z" />
-                                    <path class="hand-path" d="M135 80 L165 92 C175 100 170 115 155 120 L130 108 Z" />
-                                    <path class="hand-path" d="M125 90 L150 105 C158 115 152 130 138 132 L118 115 Z" />
+                            <svg class="hands-svg" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Left hand group -->
+                                <g class="hand-left" fill="#1a2a05">
+                                    <!-- Palm -->
+                                    <path d="M10 55 C18 42 38 38 62 50 L95 62 L88 75 C60 65 28 70 10 65 Z" />
+                                    <!-- Thumb -->
+                                    <path d="M60 50 C68 38 82 40 86 53 C90 66 78 74 68 70 Z" />
+                                    <!-- Index finger -->
+                                    <path d="M90 62 L110 68 C116 71 115 82 106 84 L90 78 Z" />
+                                    <!-- Middle finger -->
+                                    <path d="M86 72 L106 80 C112 84 110 96 100 97 L84 88 Z" />
+                                    <!-- Ring finger -->
+                                    <path d="M78 80 L96 90 C100 97 96 108 86 108 L72 96 Z" />
                                 </g>
-                                <!-- High-Detail Anatomical Right Hand -->
-                                <g class="hand-r">
-                                    <path class="hand-path"
-                                        d="M230 60 C210 40 170 35 140 55 L100 70 L115 85 C150 75 200 85 230 75 Z" />
-                                    <path class="hand-path" d="M140 55 C125 40 105 45 100 60 C95 75 110 85 125 80 Z" />
-                                    <path class="hand-path" d="M100 70 L70 80 C60 85 60 100 75 105 L100 95 Z" />
-                                    <path class="hand-path" d="M105 80 L75 92 C65 100 70 115 85 120 L110 108 Z" />
-                                    <path class="hand-path" d="M115 90 L90 105 C82 115 88 130 102 132 L122 115 Z" />
+                                <!-- Right hand group -->
+                                <g class="hand-right" fill="#1a2a05">
+                                    <!-- Palm -->
+                                    <path d="M190 55 C182 42 162 38 138 50 L105 62 L112 75 C140 65 172 70 190 65 Z" />
+                                    <!-- Thumb -->
+                                    <path d="M140 50 C132 38 118 40 114 53 C110 66 122 74 132 70 Z" />
+                                    <!-- Index finger -->
+                                    <path d="M110 62 L90 68 C84 71 85 82 94 84 L110 78 Z" />
+                                    <!-- Middle finger -->
+                                    <path d="M114 72 L94 80 C88 84 90 96 100 97 L116 88 Z" />
+                                    <!-- Ring finger -->
+                                    <path d="M122 80 L104 90 C100 97 104 108 114 108 L128 96 Z" />
                                 </g>
                             </svg>
-                            <div class="logo-text">NOKIA</div>
+                            <div class="nokia-logo">NOKIA</div>
                         </div>
 
-                        <!-- Menu Screen -->
+                        <!-- Menu -->
                         <div id="menuScreen" class="ui-screen">
                             <div class="menu-title">SNAKE II</div>
-                            <ul class="menu-options" id="menuList">
+                            <ul class="menu-list" id="menuList">
                                 <li class="selected" data-action="start">START GAME</li>
                                 <li data-action="level">LEVEL: <span id="levelVal">1</span></li>
                                 <li data-action="mode">MODE: <span id="modeVal">SOLID</span></li>
-                                <li data-action="highscore">HI-SCORE: <span id="menuHighScore">0</span></li>
+                                <li data-action="highscore">HI-SCORE: <span id="menuHi">0</span></li>
                             </ul>
                         </div>
 
-                        <!-- Game Screen -->
-                        <div id="gamePlayScreen" class="ui-screen">
-                            <div id="pauseOverlay"
-                                style="display:none; position:absolute; top:45%; left:50%; transform:translate(-50%, -50%); background:var(--lcd-green); padding:5px 15px; border:2px solid var(--lcd-dark); z-index:100; font-weight:bold; font-size:1.5rem;">
-                                PAUSED</div>
+                        <!-- Gameplay -->
+                        <div id="gamePlayScreen" class="ui-screen" style="padding:0; flex-direction:column;">
+                            <div id="pauseOverlay">PAUSED</div>
                             <div class="status-bar">
-                                <div class="status-icons">
-                                    <div class="signal-icon">
-                                        <div class="signal-bar" style="height: 20%"></div>
-                                        <div class="signal-bar" style="height: 40%"></div>
-                                        <div class="signal-bar" style="height: 60%"></div>
-                                        <div class="signal-bar" style="height: 80%"></div>
+                                <div style="display:flex;align-items:center;gap:4px;">
+                                    <div class="signal-bars">
+                                        <div class="signal-bar" style="height:3px"></div>
+                                        <div class="signal-bar" style="height:5px"></div>
+                                        <div class="signal-bar" style="height:7px"></div>
+                                        <div class="signal-bar" style="height:9px"></div>
                                     </div>
-                                    <span id="levelName">SNAKE</span>
+                                    <span id="modeName" style="font-size:.9rem;">SNKE</span>
                                 </div>
-                                <div class="status-icons">
+                                <div style="display:flex;align-items:center;gap:4px;">
                                     <span id="scoreVal">0</span>
-                                    <div class="battery-icon">
-                                        <div class="battery-fill"></div>
+                                    <div class="battery">
+                                        <div class="battery-fill" id="batFill"></div>
                                     </div>
                                 </div>
                             </div>
                             <canvas id="gameCanvas"></canvas>
                         </div>
 
-                        <!-- Game Over Screen -->
+                        <!-- Game Over -->
                         <div id="gameOverScreen" class="ui-screen">
-                            <div id="recordLabel" class="record-banner">NEW RECORD!</div>
-                            <div class="game-over-title">GAME OVER</div>
-                            <div style="font-size: 1.8rem;">Score: <span id="finalScoreVal">0</span></div>
-                            <div style="margin-top: 15px; font-size: 1.3rem;">Press <span
-                                    style="background:#000;color:#94af10;padding:0 4px;">5</span> to Retry</div>
+                            <div class="new-record" id="recordLabel">NEW RECORD!</div>
+                            <div class="go-title">GAME OVER</div>
+                            <div class="go-score">Score: <span id="finalScore">0</span></div>
+                            <div class="go-hint">Press <b>5</b> to retry</div>
                         </div>
-                    </div>
+
+                    </div><!-- #gameArea -->
+                </div><!-- .screen -->
+            </div><!-- .screen-bezel -->
+
+            <!-- Brand -->
+            <div class="brand-strip">NOKIA</div>
+            <div class="nav-divider"></div>
+
+            <!-- Nav Cluster: [C] [SELECT] [▲ ▼] -->
+            <div class="nav-cluster">
+                <button class="btn-c" id="btnC">C</button>
+                <button class="btn-select" id="btnSelect"></button>
+                <div class="arrow-col">
+                    <button class="btn-arrow" id="btnUp">▲</button>
+                    <button class="btn-arrow" id="btnDown">▼</button>
                 </div>
             </div>
 
-            <div class="nokia-badge">NOKIA</div>
-            <div class="keypad-separator"></div>
-
-            <!-- AUTHENTIC KEYPAD -->
-            <div class="keypad-container">
-                <div class="nav-cluster">
-                    <button class="nav-key btn-c" id="btnC">C</button>
-                    <button class="nav-key btn-select" id="btnSelect"></button>
-                    <div class="arrow-keys">
-                        <button class="nav-key arrow-key" id="btnUp">▲</button>
-                        <button class="nav-key arrow-key" id="btnDown">▼</button>
-                    </div>
-                </div>
-
-                <div class="num-pad">
-                    <button class="btn-num">1</button>
-                    <button class="btn-num" id="num2">2 <span>abc</span></button>
-                    <button class="btn-num">3 <span>def</span></button>
-                    <button class="btn-num" id="num4">4 <span>ghi</span></button>
-                    <button class="btn-num" id="num5">5 <span>jkl</span></button>
-                    <button class="btn-num" id="num6">6 <span>mno</span></button>
-                    <button class="btn-num">7 <span>pqrs</span></button>
-                    <button class="btn-num" id="num8">8 <span>tuv</span></button>
-                    <button class="btn-num">9 <span>wxyz</span></button>
-                    <button class="btn-num" id="btnStar">*</button>
-                    <button class="btn-num">0</button>
-                    <button class="btn-num" id="btnHash">#</button>
-                </div>
+            <!-- Number Pad -->
+            <div class="num-pad">
+                <button class="btn-num">1</button>
+                <button class="btn-num" id="num2">2<sub>abc</sub></button>
+                <button class="btn-num">3<sub>def</sub></button>
+                <button class="btn-num" id="num4">4<sub>ghi</sub></button>
+                <button class="btn-num" id="num5">5<sub>jkl</sub></button>
+                <button class="btn-num" id="num6">6<sub>mno</sub></button>
+                <button class="btn-num">7<sub>pqrs</sub></button>
+                <button class="btn-num" id="num8">8<sub>tuv</sub></button>
+                <button class="btn-num">9<sub>wxyz</sub></button>
+                <button class="btn-num" id="btnStar">*</button>
+                <button class="btn-num">0</button>
+                <button class="btn-num" id="btnHash">#</button>
             </div>
-        </div>
-    </div>
+
+        </div><!-- .phone -->
+    </div><!-- .phone-wrap -->
 
     <script>
+        // ── Audio ────────────────────────────────────────────────
+        const AC = new (window.AudioContext || window.webkitAudioContext)();
+        function beep(freq, type, dur, vol = 0.08) {
+            const o = AC.createOscillator(), g = AC.createGain();
+            o.type = type; o.frequency.value = freq;
+            g.gain.setValueAtTime(vol, AC.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + dur);
+            o.connect(g); g.connect(AC.destination);
+            o.start(); o.stop(AC.currentTime + dur);
+        }
+        const sfx = {
+            click: () => beep(600, 'square', .05, .05),
+            eat: () => beep(880, 'square', .1, .1),
+            die: () => { beep(440, 'square', .2, .12); setTimeout(() => beep(220, 'square', .4, .12), 200); },
+            start: () => [440, 494, 523, 587, 659].forEach((n, i) => setTimeout(() => beep(n, 'square', .18, .06), i * 140)),
+            hi: () => [523, 659, 784, 1047].forEach((n, i) => setTimeout(() => beep(n, 'square', .12, .06), i * 110)),
+        };
+
+        // ── Canvas / grid ─────────────────────────────────────────
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const scoreEl = document.getElementById('scoreVal');
-        const menuScreen = document.getElementById('menuScreen');
-        const gamePlayScreen = document.getElementById('gamePlayScreen');
-        const gameOverScreen = document.getElementById('gameOverScreen');
-        const finalScoreVal = document.getElementById('finalScoreVal');
+        const GW = 30, GH = 20, PX = 4;  // grid w/h, pixel size
+        canvas.width = GW * PX;
+        canvas.height = GH * PX;
 
-        // Audio System
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playTone(freq, type, duration, vol = 0.1) {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
-        }
-
-        const sounds = {
-            move: () => playTone(150, 'square', 0.05, 0.02),
-            eat: () => playTone(880, 'square', 0.1, 0.1),
-            die: () => {
-                playTone(440, 'square', 0.2, 0.1);
-                setTimeout(() => playTone(220, 'square', 0.4, 0.1), 200);
-            },
-            click: () => playTone(600, 'square', 0.05, 0.05),
-            start: () => {
-                const notes = [440, 493, 523, 587, 659];
-                notes.forEach((n, i) => setTimeout(() => playTone(n, 'square', 0.15, 0.05), i * 150));
-            },
-            record: () => {
-                const notes = [523, 659, 783, 1046];
-                notes.forEach((n, i) => setTimeout(() => playTone(n, 'square', 0.1, 0.05), i * 100));
-            }
-        };
-
-        // Game Constants
-        const gridW = 30; // 30 pixels wide
-        const gridH = 18; // 18 pixels high
-        const pixelSize = 4; // Visual size for blocks
-
-        let snake = [];
-        let food = { x: 0, y: 0 };
-        let dir = { x: 1, y: 0 };
-        let nextDir = { x: 1, y: 0 };
-        let score = 0;
-        let isPaused = false;
-        let gameMode = 'SOLID'; // SOLID, WRAP, MAZE, MIX
+        // ── Game state ────────────────────────────────────────────
+        let snake, food, dir, nextDir;
+        let score = 0, hiScore = +(localStorage.getItem('snakeHi') || 0);
+        let running = false, paused = false;
+        let speed = 180, lastT = 0;
+        let gameMode = 'SOLID';   // SOLID | WRAP | MAZE | MIX
+        let level = 1;
         let obstacles = [];
-        let currentLevel = 1;
-        let gameLoop = null;
-        let speed = 150;
-        let highScore = localStorage.getItem('nokiaHighScore') || 0;
-        let gameRunning = false;
-        let lastTime = 0;
+        let screen = 'splash';
 
-        function resize() {
-            const container = canvas.parentElement;
-            canvas.width = gridW * pixelSize;
-            canvas.height = gridH * pixelSize;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        // UI State
-        let currentScreen = 'splashScreen';
-
-        // Auto transition from splash to menu
-        setTimeout(() => {
-            if (currentScreen === 'splashScreen') {
-                sounds.start();
-                showScreen('menuScreen');
-            }
-        }, 3200);
-
+        // ── Screen manager ────────────────────────────────────────
+        const screens = ['splashScreen', 'menuScreen', 'gamePlayScreen', 'gameOverScreen'];
         function showScreen(id) {
-            if (id === 'menuScreen') {
-                document.getElementById('menuHighScore').textContent = highScore;
-            }
-            [document.getElementById('splashScreen'), menuScreen, gamePlayScreen, gameOverScreen].forEach(s => {
-                if (s) s.classList.remove('active');
-            });
+            screens.forEach(s => document.getElementById(s).classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            currentScreen = id;
+            screen = id.replace('Screen', '').replace(/([A-Z])/g, m => m.toLowerCase());
+            if (id === 'menuScreen') document.getElementById('menuHi').textContent = hiScore;
         }
 
-        // Controls
-        function handleInput(key) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+        // ── Auto splash → menu ───────────────────────────────────
+        setTimeout(() => { if (screen === 'splash') { sfx.start(); showScreen('menuScreen'); } }, 3000);
 
-            // Visual button feedback mapping for all buttons
-            const btnMap = {
-                'ArrowUp': 'btnUp', 'ArrowDown': 'btnDown',
-                'ArrowLeft': 'num4', 'ArrowRight': 'num6',
-                '5': 'num5', '2': 'num2', '4': 'num4', '6': 'num6', '8': 'num8',
-                'Select': 'btnSelect', 'Enter': 'btnSelect', ' ': 'btnSelect',
-                'Escape': 'btnC', 'Backspace': 'btnC',
-                '#': 'btnHash', '*': 'btnStar'
-            };
-            const btnId = btnMap[key];
-            if (btnId) {
-                const el = document.getElementById(btnId);
-                if (el) {
-                    el.classList.add('active-glow');
-                    setTimeout(() => el.classList.remove('active-glow'), 100);
+        // ── Obstacles ────────────────────────────────────────────
+        function buildObstacles() {
+            obstacles = [];
+            if (gameMode !== 'MAZE' && gameMode !== 'MIX') return;
+            [[6, 4], [23, 4], [6, 14], [23, 14], [14, 9]].forEach(([cx, cy]) => {
+                for (let d = -2; d <= 2; d++) {
+                    if (cx + d > 0 && cx + d < GW - 1) obstacles.push({ x: cx + d, y: cy });
+                    if (cy + d > 0 && cy + d < GH - 1) obstacles.push({ x: cx, y: cy + d });
                 }
-            }
-
-            if (currentScreen === 'splashScreen') {
-                sounds.start();
-                showScreen('menuScreen');
-                return;
-            }
-
-            if (currentScreen === 'menuScreen') {
-                if (key === 'ArrowUp' || key === 'ArrowDown' || key === '2' || key === '8') {
-                    sounds.click();
-                    const items = document.querySelectorAll('#menuList li');
-                    const selected = document.querySelector('#menuList li.selected');
-                    selected.classList.remove('selected');
-                    const isUp = key === 'ArrowUp' || key === '2';
-                    if (isUp) (selected.previousElementSibling || items[items.length - 1]).classList.add('selected');
-                    else (selected.nextElementSibling || items[0]).classList.add('selected');
-                }
-                if (key === 'Enter' || key === '5' || key === ' ' || key === 'Select') {
-                    sounds.click();
-                    const selected = document.querySelector('#menuList li.selected');
-                    const action = selected.dataset.action;
-                    if (action === 'start') {
-                        initGame();
-                    } else if (action === 'mode') {
-                        const modes = ['SOLID', 'WRAP', 'MAZE', 'MIX'];
-                        let idx = modes.indexOf(gameMode);
-                        gameMode = modes[(idx + 1) % modes.length];
-                        document.getElementById('modeVal').textContent = gameMode;
-                    } else if (action === 'level') {
-                        currentLevel = (currentLevel % 9) + 1;
-                        document.getElementById('levelVal').textContent = currentLevel;
-                    }
-                }
-            } else if (currentScreen === 'gamePlayScreen') {
-                if (key === '#' || key === '*' || key === 'p' || key === 'Escape') {
-                    isPaused = !isPaused;
-                    document.getElementById('pauseOverlay').style.display = isPaused ? 'block' : 'none';
-                    sounds.click();
-                    return;
-                }
-                if (isPaused) return;
-                if ((key === 'ArrowUp' || key === '2') && dir.y === 0) nextDir = { x: 0, y: -1 };
-                if ((key === 'ArrowDown' || key === '8') && dir.y === 0) nextDir = { x: 0, y: 1 };
-                if ((key === 'ArrowLeft' || key === '4') && dir.x === 0) nextDir = { x: -1, y: 0 };
-                if ((key === 'ArrowRight' || key === '6') && dir.x === 0) nextDir = { x: 1, y: 0 };
-            } else if (currentScreen === 'gameOverScreen') {
-                if (key === 'Enter' || key === '5' || key === 'Select') {
-                    sounds.click();
-                    showScreen('menuScreen');
-                }
-            }
+            });
         }
 
-        window.addEventListener('keydown', e => handleInput(e.key));
-
-        const bindBtn = (id, key) => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.addEventListener('mousedown', (e) => { e.preventDefault(); handleInput(key); });
-                el.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(key); });
-            }
-        };
-
-        bindBtn('btnUp', 'ArrowUp');
-        bindBtn('btnDown', 'ArrowDown');
-        bindBtn('num2', '2');
-        bindBtn('num4', '4');
-        bindBtn('num5', '5');
-        bindBtn('num6', '6');
-        bindBtn('num8', '8');
-        bindBtn('btnSelect', 'Select');
-        bindBtn('btnHash', '#');
-        bindBtn('btnStar', '*');
-        bindBtn('btnC', 'Escape');
-
-        document.querySelectorAll('.btn').forEach(b => {
-            b.addEventListener('mousedown', () => sounds.click());
-        });
-
-        // Signal/Battery Simulation
-        setInterval(() => {
-            const bars = document.querySelectorAll('.signal-bar');
-            const down = Math.random() > 0.8;
-            bars.forEach((b, i) => b.style.opacity = (down && i > 1) ? '0.2' : '1');
-        }, 3000);
-
+        // ── Food spawn ────────────────────────────────────────────
         function spawnFood() {
-            let valid = false;
-            while (!valid) {
-                food = {
-                    x: Math.floor(Math.random() * gridW),
-                    y: Math.floor(Math.random() * gridH)
-                };
-                valid = !snake.some(s => s.x === food.x && s.y === food.y) &&
+            let ok = false;
+            while (!ok) {
+                food = { x: Math.floor(Math.random() * GW), y: Math.floor(Math.random() * GH) };
+                ok = !snake.some(s => s.x === food.x && s.y === food.y) &&
                     !obstacles.some(o => o.x === food.x && o.y === food.y);
             }
         }
 
-        function createObstacles() {
-            obstacles = [];
-            if (gameMode === 'MAZE' || gameMode === 'MIX') {
-                // Create a few cross-shaped or line obstacles
-                const centers = [
-                    { x: 7, y: 5 }, { x: 22, y: 5 },
-                    { x: 7, y: 12 }, { x: 22, y: 12 },
-                    { x: 15, y: 9 }
-                ];
-                centers.forEach(c => {
-                    for (let i = -2; i <= 2; i++) {
-                        if (c.x + i > 0 && c.x + i < gridW - 1) obstacles.push({ x: c.x + i, y: c.y });
-                        if (c.y + i > 0 && c.y + i < gridH - 1) obstacles.push({ x: c.x, y: c.y + i });
-                    }
-                });
-            }
-        }
-
+        // ── Init game ─────────────────────────────────────────────
         function initGame() {
             score = 0;
-            scoreEl.textContent = '0';
-            isPaused = false;
+            document.getElementById('scoreVal').textContent = '0';
+            document.getElementById('batFill').style.width = '90%';
+            document.getElementById('modeName').textContent = gameMode.slice(0, 4);
             document.getElementById('pauseOverlay').style.display = 'none';
-            createObstacles();
-            // Speed logic: Level 1 (200ms) to Level 9 (40ms)
-            speed = 220 - (currentLevel * 20);
-            dir = { x: 1, y: 0 };
-            nextDir = { x: 1, y: 0 };
-            snake = [
-                { x: 5, y: 10 },
-                { x: 4, y: 10 },
-                { x: 3, y: 10 }
-            ];
+            paused = false;
+            speed = 220 - level * 20;
+            dir = { x: 1, y: 0 }; nextDir = { x: 1, y: 0 };
+            snake = [{ x: 6, y: 10 }, { x: 5, y: 10 }, { x: 4, y: 10 }];
+            buildObstacles();
             spawnFood();
             showScreen('gamePlayScreen');
-            gameRunning = true;
-            lastTime = performance.now();
+            running = true;
+            lastT = performance.now();
             requestAnimationFrame(loop);
         }
 
-        function loop(timestamp) {
-            if (!gameRunning) return;
-
-            const delta = timestamp - lastTime;
-            if (delta > speed) {
-                if (!isPaused) update();
+        // ── Game loop ─────────────────────────────────────────────
+        function loop(ts) {
+            if (!running) return;
+            if (ts - lastT > speed) {
+                if (!paused) update();
                 draw();
-                lastTime = timestamp;
+                lastT = ts;
             }
             requestAnimationFrame(loop);
         }
@@ -884,102 +806,183 @@
         function update() {
             dir = nextDir;
             const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+            const wrap = gameMode === 'WRAP' || gameMode === 'MIX';
 
-            // Collision checks
-            const isWrap = (gameMode === 'WRAP' || gameMode === 'MIX');
-            if (head.x < 0 || head.x >= gridW || head.y < 0 || head.y >= gridH) {
-                if (isWrap) {
-                    if (head.x < 0) head.x = gridW - 1; else if (head.x >= gridW) head.x = 0;
-                    if (head.y < 0) head.y = gridH - 1; else if (head.y >= gridH) head.y = 0;
-                } else {
-                    return die();
-                }
+            if (head.x < 0 || head.x >= GW || head.y < 0 || head.y >= GH) {
+                if (wrap) {
+                    if (head.x < 0) head.x = GW - 1; else if (head.x >= GW) head.x = 0;
+                    if (head.y < 0) head.y = GH - 1; else if (head.y >= GH) head.y = 0;
+                } else { return die(); }
             }
-            if (snake.some(s => s.x === head.x && s.y === head.y)) {
-                return die();
-            }
-            if (obstacles.some(o => o.x === head.x && o.y === head.y)) {
-                return die();
-            }
+            if (snake.some(s => s.x === head.x && s.y === head.y)) return die();
+            if (obstacles.some(o => o.x === head.x && o.y === head.y)) return die();
 
             snake.unshift(head);
             if (head.x === food.x && head.y === food.y) {
-                score += (9 + Math.floor(score / 100)); // Bonus points as score grows
-                scoreEl.textContent = score;
-                if (score > highScore) {
-                    if (highScore > 0 && score <= highScore + 10) sounds.record(); // Only play jingle once when record is broken
-                    highScore = score;
-                    localStorage.setItem('nokiaHighScore', highScore);
-                }
-                sounds.eat();
+                const pts = 10 + Math.floor(score / 50);
+                score += pts;
+                document.getElementById('scoreVal').textContent = score;
+                if (score > hiScore) { if (hiScore > 0) sfx.hi(); hiScore = score; localStorage.setItem('snakeHi', hiScore); }
+                sfx.eat();
                 spawnFood();
-                // Battery drain simulation
-                if (score > 100) document.querySelector('.battery-fill').style.width = '60%';
-                if (score > 300) document.querySelector('.battery-fill').style.width = '30%';
-                // Increase speed slightly
-                if (speed > 60) speed -= 2;
+                if (score > 100) document.getElementById('batFill').style.width = '60%';
+                if (score > 300) document.getElementById('batFill').style.width = '25%';
+                if (speed > 50) speed -= 2;
             } else {
                 snake.pop();
             }
         }
 
         function die() {
-            gameRunning = false;
-            sounds.die();
-            finalScoreVal.textContent = score;
-            const isNewRecord = (score > 0 && score >= highScore);
-            document.getElementById('recordLabel').style.display = isNewRecord ? 'block' : 'none';
-            setTimeout(() => showScreen('gameOverScreen'), 1000);
+            running = false; sfx.die();
+            document.getElementById('finalScore').textContent = score;
+            const rec = score > 0 && score >= hiScore;
+            document.getElementById('recordLabel').style.display = rec ? 'block' : 'none';
+            setTimeout(() => showScreen('gameOverScreen'), 900);
         }
 
+        // ── Draw ──────────────────────────────────────────────────
         function draw() {
-            // Authentic LCD Ghosting: We don't clear fully, creating a trail
-            ctx.fillStyle = 'rgba(148, 175, 16, 0.4)'; // LCD background with alpha
+            // LCD ghost trail (partial clear)
+            ctx.fillStyle = 'rgba(143,168,8,0.45)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw Food (Classic Pixel Cross)
-            ctx.fillStyle = 'rgba(43, 58, 26, 0.8)';
-            const fx = food.x * pixelSize;
-            const fy = food.y * pixelSize;
-            ctx.fillRect(fx + 1, fy, 2, 1);
-            ctx.fillRect(fx, fy + 1, 4, 2);
-            ctx.fillRect(fx + 1, fy + 3, 2, 1);
-
-            // Draw Obstacles
-            ctx.fillStyle = '#1a2a0a';
+            // Obstacles (dark bricks)
             obstacles.forEach(o => {
-                ctx.fillRect(o.x * pixelSize, o.y * pixelSize, pixelSize, pixelSize);
-                // Inner "brick" pattern for retro texture
-                ctx.fillStyle = 'rgba(148, 175, 16, 0.15)';
-                ctx.fillRect(o.x * pixelSize + 1, o.y * pixelSize + 1, pixelSize - 2, pixelSize - 2);
-                ctx.fillStyle = '#1a2a0a';
+                ctx.fillStyle = '#1a2a05';
+                ctx.fillRect(o.x * PX, o.y * PX, PX, PX);
+                ctx.fillStyle = 'rgba(143,168,8,0.12)';
+                ctx.fillRect(o.x * PX + 1, o.y * PX + 1, PX - 2, PX - 2);
             });
 
-            // Draw Snake
-            snake.forEach((p, i) => {
-                const sx = p.x * pixelSize;
-                const sy = p.y * pixelSize;
+            // Food (pixel cross)
+            ctx.fillStyle = 'rgba(26,42,5,0.85)';
+            const fx = food.x * PX, fy = food.y * PX;
+            ctx.fillRect(fx + 1, fy, PX - 2, 1);
+            ctx.fillRect(fx, fy + 1, PX, PX - 2);
+            ctx.fillRect(fx + 1, fy + PX - 1, PX - 2, 1);
 
+            // Snake
+            snake.forEach((p, i) => {
+                const sx = p.x * PX, sy = p.y * PX;
                 if (i === 0) {
-                    ctx.fillStyle = '#2b3a1a';
-                    // Head with "eyes"
-                    ctx.fillRect(sx, sy, pixelSize, pixelSize);
-                    ctx.fillStyle = '#94af10';
-                    if (dir.x !== 0) {
-                        ctx.fillRect(sx + 2, sy, 1, 1);
-                        ctx.fillRect(sx + 2, sy + 3, 1, 1);
-                    } else {
-                        ctx.fillRect(sx, sy + 2, 1, 1);
-                        ctx.fillRect(sx + 3, sy + 2, 1, 1);
-                    }
+                    ctx.fillStyle = '#1a2a05';
+                    ctx.fillRect(sx, sy, PX, PX);
+                    // Eyes
+                    ctx.fillStyle = '#8fa808';
+                    if (dir.x !== 0) { ctx.fillRect(sx + 2, sy, 1, 1); ctx.fillRect(sx + 2, sy + PX - 1, 1, 1); }
+                    else { ctx.fillRect(sx, sy + 2, 1, 1); ctx.fillRect(sx + PX - 1, sy + 2, 1, 1); }
                 } else {
-                    // Body block - slightly more transparent for that LCD blur
-                    ctx.fillStyle = `rgba(43, 58, 26, ${Math.max(0.4, 1 - i * 0.05)})`;
-                    ctx.fillRect(sx + 0.5, sy + 0.5, pixelSize - 1, pixelSize - 1);
+                    const alpha = Math.max(0.35, 1 - i * 0.04);
+                    ctx.fillStyle = `rgba(26,42,5,${alpha})`;
+                    ctx.fillRect(sx + .5, sy + .5, PX - 1, PX - 1);
                 }
             });
         }
 
+        // ── Signal flicker simulation ─────────────────────────────
+        setInterval(() => {
+            document.querySelectorAll('.signal-bar').forEach((b, i) => {
+                b.style.opacity = (Math.random() < 0.15 && i > 1) ? '0.2' : '1';
+            });
+        }, 2500);
+
+        // ── Input ─────────────────────────────────────────────────
+        function flash(id) {
+            const el = document.getElementById(id); if (!el) return;
+            el.classList.add('lit');
+            setTimeout(() => el.classList.remove('lit'), 120);
+        }
+
+        function input(key) {
+            if (AC.state === 'suspended') AC.resume();
+
+            // Visual feedback
+            const BM = { 'ArrowUp': 'btnUp', 'ArrowDown': 'btnDown', '2': 'num2', '4': 'num4', '5': 'num5', '6': 'num6', '8': 'num8', 'Enter': 'btnSelect', ' ': 'btnSelect', 'Escape': 'btnC', '#': 'btnHash', '*': 'btnStar' };
+            if (BM[key]) flash(BM[key]);
+
+            // Splash
+            if (screen === 'splash') { sfx.start(); showScreen('menuScreen'); return; }
+
+            // Menu
+            if (screen === 'menu') {
+                if (key === 'ArrowUp' || key === '2') {
+                    sfx.click();
+                    const items = [...document.querySelectorAll('#menuList li')];
+                    const idx = items.findIndex(l => l.classList.contains('selected'));
+                    items[idx].classList.remove('selected');
+                    items[(idx - 1 + items.length) % items.length].classList.add('selected');
+                }
+                if (key === 'ArrowDown' || key === '8') {
+                    sfx.click();
+                    const items = [...document.querySelectorAll('#menuList li')];
+                    const idx = items.findIndex(l => l.classList.contains('selected'));
+                    items[idx].classList.remove('selected');
+                    items[(idx + 1) % items.length].classList.add('selected');
+                }
+                if (key === 'Enter' || key === '5' || key === ' ') {
+                    sfx.click();
+                    const sel = document.querySelector('#menuList li.selected');
+                    const act = sel.dataset.action;
+                    if (act === 'start') { initGame(); }
+                    else if (act === 'level') {
+                        level = (level % 9) + 1;
+                        document.getElementById('levelVal').textContent = level;
+                    }
+                    else if (act === 'mode') {
+                        const modes = ['SOLID', 'WRAP', 'MAZE', 'MIX'];
+                        gameMode = modes[(modes.indexOf(gameMode) + 1) % modes.length];
+                        document.getElementById('modeVal').textContent = gameMode;
+                    }
+                }
+                return;
+            }
+
+            // Gameplay
+            if (screen === 'gameplay') {
+                if (key === '#' || key === '*' || key === 'Escape' || key === 'p') {
+                    paused = !paused;
+                    document.getElementById('pauseOverlay').style.display = paused ? 'block' : 'none';
+                    sfx.click(); return;
+                }
+                if (paused) return;
+                if ((key === 'ArrowUp' || key === '2') && dir.y === 0) nextDir = { x: 0, y: -1 };
+                if ((key === 'ArrowDown' || key === '8') && dir.y === 0) nextDir = { x: 0, y: 1 };
+                if ((key === 'ArrowLeft' || key === '4') && dir.x === 0) nextDir = { x: -1, y: 0 };
+                if ((key === 'ArrowRight' || key === '6') && dir.x === 0) nextDir = { x: 1, y: 0 };
+            }
+
+            // Game over
+            if (screen === 'gameover') {
+                if (key === '5' || key === 'Enter') { sfx.click(); showScreen('menuScreen'); }
+            }
+        }
+
+        // Keyboard
+        window.addEventListener('keydown', e => {
+            const blocked = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '];
+            if (blocked.includes(e.key)) e.preventDefault();
+            input(e.key);
+        });
+
+        // On-screen buttons
+        function bind(id, key) {
+            const el = document.getElementById(id); if (!el) return;
+            const fn = e => { e.preventDefault(); input(key); };
+            el.addEventListener('mousedown', fn);
+            el.addEventListener('touchstart', fn, { passive: false });
+        }
+        bind('btnUp', 'ArrowUp');
+        bind('btnDown', 'ArrowDown');
+        bind('num2', '2');
+        bind('num4', '4');
+        bind('num5', '5');
+        bind('num6', '6');
+        bind('num8', '8');
+        bind('btnSelect', 'Enter');
+        bind('btnC', 'Escape');
+        bind('btnHash', '#');
+        bind('btnStar', '*');
     </script>
 </body>
 
