@@ -4,8 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nokia Snake Game</title>
+    <title>Retro Snake - Nokia 3310 Edition</title>
+    <!-- Importing pixel fonts for that authentic feel -->
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --nokia-blue: #1c3d5a;
+            --nokia-silver: #c0c0c0;
+            --lcd-green: #94af10;
+            --lcd-dark: #2b3a1a;
+            --btn-grey: #4a4a4a;
+            --btn-light: #6a6a6a;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -15,409 +26,624 @@
         }
 
         body {
-            font-family: 'Courier New', monospace;
-            background: linear-gradient(135deg, #4b7500 0%, #000000 100%);
-            color: #d7ff5f;
+            background-color: #1a1a1a;
+            background-image: radial-gradient(circle, #333 1px, transparent 1px);
+            background-size: 20px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-            overflow-x: hidden;
+            font-family: 'VT323', monospace;
+            overflow: hidden;
+            color: #fff;
         }
 
-        .container {
-            text-align: center;
-            width: 100%;
-            max-width: 500px;
-        }
-
-        h1 {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            letter-spacing: 8px;
-            text-shadow: 3px 3px 0px #000;
-            font-weight: 900;
-        }
-
-        /* Splash Art (Pure CSS replacement for missing image) */
-        .splash-art {
-            width: 100%;
-            height: 180px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 3px solid #d7ff5f;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* The Nokia 3310 Shell */
+        .nokia-3310 {
             position: relative;
-            border-radius: 4px;
-        }
-
-        .pixel-snake {
-            width: 50px;
-            height: 50px;
-            background: #d7ff5f;
+            width: 320px;
+            height: 600px;
+            background: var(--nokia-blue);
+            border-radius: 40px 40px 100px 100px;
             box-shadow:
-                25px 0 0 #d7ff5f, 50px 0 0 #d7ff5f,
-                50px 25px 0 #d7ff5f, 50px 50px 0 #d7ff5f,
-                25px 50px 0 #d7ff5f, 0 50px 0 #d7ff5f,
-                0 75px 0 #d7ff5f;
-            animation: float 2s infinite ease-in-out;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
-        .play-btn {
-            background: #d7ff5f;
-            color: #000;
-            border: none;
-            padding: 20px 40px;
-            font-size: 1.6rem;
-            font-weight: bold;
-            font-family: inherit;
-            cursor: pointer;
-            width: 100%;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            transition: all 0.1s;
-            box-shadow: 0 6px 0 #2a4300;
-            margin-bottom: 15px;
-        }
-
-        .play-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 3px 0 #2a4300;
-        }
-
-        /* Settings */
-        .settings {
+                0 20px 50px rgba(0, 0, 0, 0.8),
+                inset 0 5px 15px rgba(255, 255, 255, 0.2),
+                inset 0 -10px 20px rgba(0, 0, 0, 0.5);
             display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 10px;
-            font-size: 0.9rem;
-        }
-
-        select {
-            background: transparent;
-            color: #d7ff5f;
-            border: 1px solid #d7ff5f;
-            padding: 5px;
-            font-family: inherit;
-        }
-
-        /* Game View */
-        #gameView {
-            display: none;
-            width: 100%;
             flex-direction: column;
             align-items: center;
+            padding: 20px;
+            border: 2px solid #0a1a2a;
         }
 
-        .game-header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
+        /* Speaker grill */
+        .speaker {
+            width: 60px;
+            height: 6px;
+            background: #0a1a2a;
+            border-radius: 3px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Screen Section */
+        .screen-bezel {
+            width: 260px;
+            height: 200px;
+            background: #222;
+            border-radius: 10px;
             padding: 15px;
-            font-size: 1.4rem;
-            font-weight: bold;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 1);
+            position: relative;
+            margin-bottom: 30px;
+            border: 1px solid #333;
         }
 
-        #gameCanvas {
+        .screen-glass {
             width: 100%;
-            max-width: 400px;
-            aspect-ratio: 1/1;
-            background: #000;
-            border: 4px solid #d7ff5f;
-            touch-action: none;
-        }
-
-        /* Mobile Controls */
-        .mobile-controls {
-            display: grid;
-            grid-template-areas:
-                ". up ."
-                "left . right"
-                ". down .";
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .ctrl-btn {
-            width: 70px;
-            height: 70px;
-            background: rgba(215, 255, 95, 0.1);
-            border: 3px solid #d7ff5f;
-            color: #d7ff5f;
+            height: 100%;
+            background: var(--lcd-green);
+            border: 2px solid #000;
+            position: relative;
+            overflow: hidden;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            border-radius: 50%;
-            cursor: pointer;
+            flex-direction: column;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
         }
 
-        .ctrl-btn:active {
-            background: #d7ff5f;
-            color: #000;
-        }
-
-        .up {
-            grid-area: up;
-        }
-
-        .down {
-            grid-area: down;
-        }
-
-        .left {
-            grid-area: left;
-        }
-
-        .right {
-            grid-area: right;
-        }
-
-        /* Game Over */
-        #gameOverOverlay {
-            display: none;
-            position: fixed;
+        /* LCD Pixel Effect */
+        .screen-glass::after {
+            content: "";
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 100;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+            background-size: 2px 2px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* Game View within screen */
+        #gameArea {
+            width: 100%;
+            height: 100%;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            color: var(--lcd-dark);
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--lcd-dark);
+            padding-bottom: 2px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            image-rendering: pixelated;
+        }
+
+        /* Keypad Section */
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            padding: 0 10px;
+        }
+
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            width: 100%;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .btn {
+            background: var(--btn-grey);
+            border: none;
+            border-radius: 50%;
+            height: 45px;
+            cursor: pointer;
+            box-shadow:
+                0 4px 0 #222,
+                inset 0 2px 2px rgba(255, 255, 255, 0.2);
+            color: #ddd;
+            font-family: inherit;
+            font-weight: bold;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            transition: transform 0.05s, box-shadow 0.05s;
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #222;
+        }
+
+        .btn span {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .btn-large {
+            height: 55px;
+            border-radius: 20px;
+        }
+
+        .btn-silver {
+            background: var(--nokia-silver);
+            color: #333;
+            box-shadow: 0 4px 0 #888;
+        }
+
+        .btn-silver:active {
+            box-shadow: 0 2px 0 #888;
+        }
+
+        /* Splash Screen & Hands */
+        .nokia-hands {
+            position: relative;
+            width: 100px;
+            height: 60px;
+            margin-bottom: 20px;
+        }
+
+        .hand {
+            position: absolute;
+            width: 40px;
+            height: 10px;
+            background: var(--lcd-dark);
+            border-radius: 5px;
+        }
+
+        .hand-left {
+            top: 10px;
+            left: -20px;
+            transform: rotate(30deg);
+            animation: hand-in-left 2s forwards;
+        }
+
+        .hand-right {
+            bottom: 10px;
+            right: -20px;
+            transform: rotate(-30deg);
+            animation: hand-in-right 2s forwards;
+        }
+
+        @keyframes hand-in-left {
+            0% {
+                left: -50px;
+            }
+
+            100% {
+                left: 10px;
+            }
+        }
+
+        @keyframes hand-in-right {
+            0% {
+                right: -50px;
+            }
+
+            100% {
+                right: 10px;
+            }
+        }
+
+        .splash-text {
+            font-size: 2.5rem;
+            letter-spacing: 5px;
+            font-weight: bold;
+            opacity: 0;
+            animation: fade-in 1s 2s forwards;
+        }
+
+        @keyframes fade-in {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Screens Display Logic */
+        .ui-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
             text-align: center;
         }
 
-        #gameOverOverlay h2 {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            color: #d7ff5f;
-            text-shadow: 0 0 20px rgba(215, 255, 95, 0.5);
+        .ui-screen.active {
+            display: flex;
         }
 
-        .final-score {
+        .menu-title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .menu-options {
+            list-style: none;
+            font-size: 1.5rem;
+        }
+
+        .menu-options li.selected {
+            background: var(--lcd-dark);
+            color: var(--lcd-green);
+            padding: 0 10px;
+        }
+
+        .game-over-title {
             font-size: 2rem;
-            margin-bottom: 40px;
+            margin-bottom: 5px;
+        }
+
+        .score-display {
+            font-size: 1.5rem;
+        }
+
+        /* Specific Nav Keys Positioning */
+        .nav-up {
+            grid-column: 2;
+            height: 35px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .nav-down {
+            grid-column: 2;
+            height: 35px;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .nav-left {
+            grid-column: 1;
+            grid-row: 1 / span 2;
+            height: 100%;
+            border-radius: 20px;
+        }
+
+        .nav-right {
+            grid-column: 3;
+            grid-row: 1 / span 2;
+            height: 100%;
+            border-radius: 20px;
         }
     </style>
 </head>
 
 <body>
-    <!-- Menu Screen -->
-    <div class="container" id="menuScreen">
-        <h1>SNAKE</h1>
-        <div class="splash-art">
-            <div class="pixel-snake"></div>
-        </div>
+    <div class="nokia-3310">
+        <div class="speaker"></div>
 
-        <div class="settings">
-            <div>
-                Level:
-                <select id="levelSelect">
-                    <option value="classic">Classic</option>
-                    <option value="teleport">Teleport</option>
-                    <option value="walls">Obstacles</option>
-                </select>
+        <div class="screen-bezel">
+            <div class="screen-glass">
+                <div id="gameArea">
+                    <!-- Splash Screen -->
+                    <div id="splashScreen" class="ui-screen active">
+                        <div class="nokia-hands">
+                            <div class="hand hand-left"></div>
+                            <div class="hand hand-right"></div>
+                        </div>
+                        <div class="splash-text">NOKIA</div>
+                    </div>
+
+                    <!-- Menu Screen -->
+                    <div id="menuScreen" class="ui-screen">
+                        <div class="menu-title">SNAKE II</div>
+                        <ul class="menu-options" id="menuList">
+                            <li class="selected" data-action="start">START GAME</li>
+                            <li data-action="highscore">HIGH SCORE: <span id="menuHighScore">0</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- Game Screen -->
+                    <div id="gamePlayScreen" class="ui-screen">
+                        <div class="status-bar">
+                            <span id="scoreVal">0</span>
+                            <span id="levelName">SNAKE</span>
+                        </div>
+                        <canvas id="gameCanvas"></canvas>
+                    </div>
+
+                    <!-- Game Over Screen -->
+                    <div id="gameOverScreen" class="ui-screen">
+                        <div class="game-over-title">GAME OVER</div>
+                        <div class="score-display">Score: <span id="finalScoreVal">0</span></div>
+                        <div style="margin-top: 10px; font-size: 1.2rem;">Try Again?</div>
+                    </div>
+                </div>
             </div>
-            <div>
-                Speed:
-                <select id="speedSelect">
-                    <option value="easy">Easy</option>
-                    <option value="medium" selected>Medium</option>
-                    <option value="impossible">Expert</option>
-                </select>
-            </div>
         </div>
 
-        <button class="play-btn" id="playBtn">START</button>
-    </div>
-
-    <!-- Game Screen -->
-    <div id="gameView">
-        <div class="game-header">
-            <span>SCORE: <span id="scoreVal">0</span></span>
-            <span>HIGH: <span id="highScore">0</span></span>
+        <!-- Nokia Nav Buttons -->
+        <div class="nav-buttons">
+            <button class="btn btn-silver nav-left" id="btnLeft">◀</button>
+            <button class="btn btn-silver nav-up" id="btnUp">▲</button>
+            <button class="btn btn-silver nav-down" id="btnDown">▼</button>
+            <button class="btn btn-silver nav-right" id="btnRight">▶</button>
         </div>
-        <canvas id="gameCanvas" width="400" height="400"></canvas>
 
-        <div class="mobile-controls">
-            <div class="ctrl-btn up" id="ctrlUp">▲</div>
-            <div class="ctrl-btn left" id="ctrlLeft">◀</div>
-            <div class="ctrl-btn right" id="ctrlRight">▶</div>
-            <div class="ctrl-btn down" id="ctrlDown">▼</div>
+        <!-- Nokia Keypad -->
+        <div class="keypad">
+            <button class="btn">1 <span>. ,</span></button>
+            <button class="btn" id="num2">2 <span>abc</span></button>
+            <button class="btn">3 <span>def</span></button>
+            <button class="btn" id="num4">4 <span>ghi</span></button>
+            <button class="btn" id="num5">5 <span>jkl</span></button>
+            <button class="btn" id="num6">6 <span>mno</span></button>
+            <button class="btn">7 <span>pqrs</span></button>
+            <button class="btn" id="num8">8 <span>tuv</span></button>
+            <button class="btn">9 <span>wxyz</span></button>
+            <button class="btn">*</button>
+            <button class="btn">0</button>
+            <button class="btn">#</button>
         </div>
-    </div>
-
-    <!-- Authentic Game Over -->
-    <div id="gameOverOverlay">
-        <h2>Game over!</h2>
-        <div class="final-score">Score: <span id="finalScoreVal">0</span></div>
-        <button class="play-btn" id="restartBtn" style="max-width: 300px;">Play Again</button>
     </div>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreEl = document.getElementById('scoreVal');
-        const highScoreEl = document.getElementById('highScore');
         const menuScreen = document.getElementById('menuScreen');
-        const gameView = document.getElementById('gameView');
-        const gameOverOverlay = document.getElementById('gameOverOverlay');
+        const gamePlayScreen = document.getElementById('gamePlayScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
         const finalScoreVal = document.getElementById('finalScoreVal');
 
-        const gridSize = 20;
-        let tileCount = 20;
+        // Audio System
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone(freq, type, duration, vol = 0.1) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        const sounds = {
+            move: () => playTone(150, 'square', 0.05, 0.02),
+            eat: () => playTone(880, 'square', 0.1, 0.1),
+            die: () => {
+                playTone(440, 'square', 0.2, 0.1);
+                setTimeout(() => playTone(220, 'square', 0.4, 0.1), 200);
+            },
+            click: () => playTone(600, 'square', 0.05, 0.05)
+        };
+
+        // Game Constants
+        const gridW = 30; // 30 pixels wide
+        const gridH = 18; // 18 pixels high
+        const pixelSize = 4; // Visual size for blocks
 
         let snake = [];
-        let food = { x: 5, y: 5 };
-        let dx = 1;
-        let dy = 0;
-        let nextDx = 1;
-        let nextDy = 0;
+        let food = { x: 0, y: 0 };
+        let dir = { x: 1, y: 0 };
+        let nextDir = { x: 1, y: 0 };
         let score = 0;
-        let highScore = localStorage.getItem('nokiaSnakeHighScore') || 0;
         let gameRunning = false;
-        let level = 'classic';
-        let speed = 120;
         let gameLoop = null;
+        let speed = 150;
+        let highScore = localStorage.getItem('nokiaHighScore') || 0;
 
-        const obstacles = [
-            { x: 5, y: 5 }, { x: 6, y: 5 }, { x: 5, y: 6 },
-            { x: 14, y: 14 }, { x: 15, y: 14 }, { x: 14, y: 15 }
-        ];
+        function resize() {
+            const container = canvas.parentElement;
+            canvas.width = gridW * pixelSize;
+            canvas.height = gridH * pixelSize;
+        }
+        window.addEventListener('resize', resize);
+        resize();
 
-        highScoreEl.textContent = highScore;
+        // UI State
+        let currentScreen = 'splashScreen';
 
-        document.getElementById('playBtn').addEventListener('click', initGame);
-        document.getElementById('restartBtn').addEventListener('click', () => {
-            gameOverOverlay.style.display = 'none';
-            initGame();
-        });
+        // Auto transition from splash to menu
+        setTimeout(() => {
+            if (currentScreen === 'splash') showScreen('menuScreen');
+        }, 4000);
 
-        window.addEventListener('keydown', e => {
-            if (!gameRunning) return;
-            if (e.key === 'ArrowUp') setDir(0, -1);
-            if (e.key === 'ArrowDown') setDir(0, 1);
-            if (e.key === 'ArrowLeft') setDir(-1, 0);
-            if (e.key === 'ArrowRight') setDir(1, 0);
-        });
+        function showScreen(id) {
+            if (id === 'menuScreen') {
+                document.getElementById('menuHighScore').textContent = highScore;
+            }
+            [document.getElementById('splashScreen'), menuScreen, gamePlayScreen, gameOverScreen].forEach(s => {
+                if (s) s.classList.remove('active');
+            });
+            document.getElementById(id).classList.add('active');
+            currentScreen = id;
+        }
 
-        const attachKey = (id, nx, ny) => {
+        // Controls
+        function handleInput(key) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            if (currentScreen === 'splashScreen') {
+                showScreen('menuScreen');
+                return;
+            }
+
+            if (currentScreen === 'menuScreen') {
+                if (key === 'ArrowUp' || key === 'ArrowDown') {
+                    sounds.click();
+                    const items = document.querySelectorAll('#menuList li');
+                    items.forEach(i => i.classList.toggle('selected'));
+                }
+                if (key === 'Enter' || key === '5' || key === ' ') {
+                    sounds.click();
+                    const selected = document.querySelector('#menuList li.selected');
+                    if (selected.dataset.action === 'start') {
+                        initGame();
+                    }
+                }
+            } else if (currentScreen === 'gamePlayScreen') {
+                if (key === 'ArrowUp' && dir.y === 0) nextDir = { x: 0, y: -1 };
+                if (key === 'ArrowDown' && dir.y === 0) nextDir = { x: 0, y: 1 };
+                if (key === 'ArrowLeft' && dir.x === 0) nextDir = { x: -1, y: 0 };
+                if (key === 'ArrowRight' && dir.x === 0) nextDir = { x: 1, y: 0 };
+            } else if (currentScreen === 'gameOverScreen') {
+                if (key === 'Enter' || key === '5') {
+                    sounds.click();
+                    showScreen('menuScreen');
+                }
+            }
+        }
+
+        window.addEventListener('keydown', e => handleInput(e.key));
+
+        const bindBtn = (id, key) => {
             const el = document.getElementById(id);
-            el.addEventListener('touchstart', (e) => { e.preventDefault(); setDir(nx, ny); });
-            el.addEventListener('mousedown', () => setDir(nx, ny));
+            if (el) {
+                el.addEventListener('mousedown', () => handleInput(key));
+                el.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(key); });
+            }
         };
-        attachKey('ctrlUp', 0, -1);
-        attachKey('ctrlDown', 0, 1);
-        attachKey('ctrlLeft', -1, 0);
-        attachKey('ctrlRight', 1, 0);
 
-        function setDir(nx, ny) {
-            if (nx !== 0 && dx !== -nx) { nextDx = nx; nextDy = 0; }
-            else if (ny !== 0 && dy !== -ny) { nextDx = 0; nextDy = ny; }
+        bindBtn('btnUp', 'ArrowUp');
+        bindBtn('btnDown', 'ArrowDown');
+        bindBtn('btnLeft', 'ArrowLeft');
+        bindBtn('btnRight', 'ArrowRight');
+        bindBtn('num5', '5');
+        bindBtn('num2', 'ArrowUp');
+        bindBtn('num4', 'ArrowLeft');
+        bindBtn('num6', 'ArrowRight');
+        bindBtn('num8', 'ArrowDown');
+
+        document.querySelectorAll('.btn').forEach(b => {
+            b.addEventListener('mousedown', () => sounds.click());
+        });
+
+        function spawnFood() {
+            let valid = false;
+            while (!valid) {
+                food = {
+                    x: Math.floor(Math.random() * gridW),
+                    y: Math.floor(Math.random() * gridH)
+                };
+                valid = !snake.some(s => s.x === food.x && s.y === food.y);
+            }
         }
 
         function initGame() {
-            level = document.getElementById('levelSelect').value;
-            const sChoice = document.getElementById('speedSelect').value;
-            speed = sChoice === 'easy' ? 150 : (sChoice === 'medium' ? 100 : 60);
-
-            score = 0; scoreEl.textContent = '0';
-            dx = 1; dy = 0; nextDx = 1; nextDy = 0;
-            snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
+            score = 0;
+            scoreEl.textContent = '0';
+            dir = { x: 1, y: 0 };
+            nextDir = { x: 1, y: 0 };
+            snake = [
+                { x: 5, y: 10 },
+                { x: 4, y: 10 },
+                { x: 3, y: 10 }
+            ];
             spawnFood();
-
-            menuScreen.style.display = 'none';
-            gameView.style.display = 'flex';
+            showScreen('gamePlayScreen');
             gameRunning = true;
-            if (gameLoop) clearTimeout(gameLoop);
-            loop();
+            lastTime = performance.now();
+            requestAnimationFrame(loop);
         }
 
-        function loop() {
+        function loop(timestamp) {
             if (!gameRunning) return;
-            update(); draw();
-            gameLoop = setTimeout(loop, speed);
-        }
 
-        function spawnFood() {
-            let v = false;
-            while (!v) {
-                food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
-                v = !snake.some(s => s.x === food.x && s.y === food.y);
-                if (level === 'walls' && obstacles.some(o => o.x === food.x && o.y === food.y)) v = false;
+            const delta = timestamp - lastTime;
+            if (delta > speed) {
+                update();
+                draw();
+                lastTime = timestamp;
             }
+            requestAnimationFrame(loop);
         }
 
         function update() {
-            dx = nextDx; dy = nextDy;
-            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+            dir = nextDir;
+            const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
 
-            if (level === 'teleport') {
-                if (head.x < 0) head.x = tileCount - 1; else if (head.x >= tileCount) head.x = 0;
-                if (head.y < 0) head.y = tileCount - 1; else if (head.y >= tileCount) head.y = 0;
-            } else if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) return gameOver();
-
-            if (snake.some(s => s.x === head.x && s.y === head.y)) return gameOver();
-            if (level === 'walls' && obstacles.some(o => o.x === head.x && o.y === head.y)) return gameOver();
+            // Collision checks
+            if (head.x < 0 || head.x >= gridW || head.y < 0 || head.y >= gridH) {
+                return die();
+            }
+            if (snake.some(s => s.x === head.x && s.y === head.y)) {
+                return die();
+            }
 
             snake.unshift(head);
             if (head.x === food.x && head.y === food.y) {
-                score += 10; scoreEl.textContent = score;
-                if (score > highScore) { highScore = score; highScoreEl.textContent = highScore; localStorage.setItem('nokiaSnakeHighScore', highScore); }
+                score += (9 + Math.floor(score / 100)); // Bonus points as score grows
+                scoreEl.textContent = score;
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('nokiaHighScore', highScore);
+                }
+                sounds.eat();
                 spawnFood();
-            } else snake.pop();
+                // Increase speed slightly
+                if (speed > 60) speed -= 2;
+            } else {
+                snake.pop();
+            }
+        }
+
+        function die() {
+            gameRunning = false;
+            sounds.die();
+            finalScoreVal.textContent = score;
+            setTimeout(() => showScreen('gameOverScreen'), 1000);
         }
 
         function draw() {
-            ctx.fillStyle = '#111';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Food
-            ctx.fillStyle = '#d7ff5f';
-            ctx.beginPath();
-            ctx.arc(food.x * gridSize + gridSize / 2, food.y * gridSize + gridSize / 2, gridSize / 2 - 2, 0, Math.PI * 2);
-            ctx.fill();
+            // Draw Food (Classic Pixel Cross)
+            ctx.fillStyle = '#2b3a1a';
+            const fx = food.x * pixelSize;
+            const fy = food.y * pixelSize;
+            ctx.fillRect(fx + 1, fy, 2, 1);
+            ctx.fillRect(fx, fy + 1, 4, 2);
+            ctx.fillRect(fx + 1, fy + 3, 2, 1);
 
-            // Obstacles
-            if (level === 'walls') {
-                ctx.fillStyle = '#444';
-                obstacles.forEach(o => {
-                    ctx.fillRect(o.x * gridSize + 1, o.y * gridSize + 1, gridSize - 2, gridSize - 2);
-                });
-            }
+            // Draw Snake
+            snake.forEach((p, i) => {
+                const sx = p.x * pixelSize;
+                const sy = p.y * pixelSize;
 
-            // Snake
-            snake.forEach((s, i) => {
-                ctx.fillStyle = i === 0 ? '#d7ff5f' : '#888';
-                ctx.fillRect(s.x * gridSize + 1, s.y * gridSize + 1, gridSize - 2, gridSize - 2);
+                if (i === 0) {
+                    // Head with "eyes"
+                    ctx.fillRect(sx, sy, pixelSize, pixelSize);
+                    ctx.fillStyle = '#94af10'; // LCD background color for eyes
+                    if (dir.x !== 0) {
+                        ctx.fillRect(sx + 2, sy, 1, 1);
+                        ctx.fillRect(sx + 2, sy + 3, 1, 1);
+                    } else {
+                        ctx.fillRect(sx, sy + 2, 1, 1);
+                        ctx.fillRect(sx + 3, sy + 2, 1, 1);
+                    }
+                    ctx.fillStyle = '#2b3a1a';
+                } else {
+                    // Body block with a tiny gap
+                    ctx.fillRect(sx + 0.5, sy + 0.5, pixelSize - 1, pixelSize - 1);
+                }
             });
         }
 
-        function gameOver() {
-            gameRunning = false;
-            finalScoreVal.textContent = score;
-            gameOverOverlay.style.display = 'flex';
-        }
+        // Initial Draw
+        draw();
     </script>
 </body>
 
