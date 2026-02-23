@@ -291,6 +291,33 @@
             align-items: center;
         }
 
+        .arrow-keys {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+
+        /* Nokia Brand Badge */
+        .nokia-badge {
+            font-family: sans-serif;
+            font-weight: 900;
+            font-size: 0.65rem;
+            letter-spacing: 4px;
+            color: rgba(255, 255, 255, 0.3);
+            text-align: center;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        /* Separator between screen and keys */
+        .keypad-separator {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.08), transparent);
+            margin-bottom: 5px;
+        }
+
         .nav-key {
             background: linear-gradient(to bottom, #4a4a4a, #2a2a2a);
             border: none;
@@ -322,7 +349,7 @@
             height: 75px;
             background: linear-gradient(to bottom, #fdfdfd, #bbb);
             border-radius: 35% 35% 50% 50%;
-            box-shadow: 0 8px 0 #777, inset 0 3px 6px #fff;
+            box-shadow: 0 8px 0 #777, inset 0 3px 6px #fff, 0 0 0 4px rgba(148, 175, 16, 0.4);
             border: 1px solid #aaa;
         }
 
@@ -558,6 +585,9 @@
                     </div>
                 </div>
             </div>
+
+            <div class="nokia-badge">NOKIA</div>
+            <div class="keypad-separator"></div>
 
             <!-- AUTHENTIC KEYPAD -->
             <div class="keypad-container">
