@@ -677,6 +677,8 @@
         let gameLoop = null;
         let speed = 150;
         let highScore = localStorage.getItem('nokiaHighScore') || 0;
+        let gameRunning = false;
+        let lastTime = 0;
 
         function resize() {
             const container = canvas.parentElement;
@@ -978,8 +980,6 @@
             });
         }
 
-        // Initial Draw
-        draw();
     </script>
 </body>
 
