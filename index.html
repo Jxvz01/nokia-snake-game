@@ -38,23 +38,87 @@
             font-family: 'VT323', monospace;
             overflow: hidden;
             color: #fff;
+            perspective: 1200px;
         }
 
+        .phone-container {
+            position: relative;
+            transform: rotateX(5deg) rotateY(-5deg);
+            filter: drop-shadow(0 40px 100px rgba(0, 0, 0, 0.8));
+        }
+
+        .phone-shadow {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.6);
+            filter: blur(25px);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        /* The Ultra-Premium Nokia 3310 Shell */
         .nokia-3310 {
             position: relative;
-            width: 350px;
-            height: 680px;
-            background: var(--nokia-blue);
-            border-radius: 50px 50px 140px 140px;
+            width: 360px;
+            height: 700px;
+            background: linear-gradient(135deg, #244b6d 0%, #1c3d5a 50%, #152e44 100%);
+            border-radius: 60px 60px 140px 140px;
             box-shadow:
-                0 40px 80px rgba(0, 0, 0, 0.9),
-                inset 0 10px 20px rgba(255, 255, 255, 0.1),
-                inset 0 -15px 40px rgba(0, 0, 0, 0.6);
+                0 50px 100px rgba(0, 0, 0, 0.9),
+                inset 0 10px 15px rgba(255, 255, 255, 0.1),
+                inset 0 -15px 40px rgba(0, 0, 0, 0.7),
+                0 0 0 4px #0a1a2a;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 25px;
-            border: 4px solid #0a1a2a;
+            padding: 30px;
+            perspective: 1000px;
+            overflow: hidden;
+        }
+
+        /* Plastic Texture Overlay */
+        .nokia-3310::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Ambient Screen Glow */
+        .nokia-3310::before {
+            content: "";
+            position: absolute;
+            top: 100px;
+            width: 280px;
+            height: 220px;
+            background: rgba(148, 175, 16, 0.2);
+            filter: blur(40px);
+            border-radius: 20px;
+            z-index: 1;
+            pointer-events: none;
+            animation: backlight-pulse 4s infinite alternate;
+        }
+
+        @keyframes backlight-pulse {
+            from {
+                opacity: 0.3;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
         }
 
         .speaker {
@@ -73,18 +137,20 @@
         }
 
         .screen-bezel {
-            width: 290px;
-            height: 220px;
-            background: #1a1a1a;
-            border-radius: 12px;
-            padding: 12px;
+            width: 300px;
+            height: 230px;
+            background: #0d0d0d;
+            border-radius: 15px;
+            padding: 14px;
             box-shadow:
                 inset 0 4px 15px #000,
                 0 0 0 5px #2c4c6a,
-                0 5px 15px rgba(0, 0, 0, 0.5);
+                0 8px 20px rgba(0, 0, 0, 0.8),
+                0 1px 1px rgba(255, 255, 255, 0.2);
             position: relative;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             border: 1px solid #333;
+            z-index: 5;
         }
 
         .screen-glass {
@@ -107,9 +173,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 40%, rgba(0, 0, 0, 0.1) 100%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 50%, rgba(0, 0, 0, 0.2) 100%);
             z-index: 20;
             pointer-events: none;
+            border-radius: 2px;
         }
 
         @keyframes lcd-flicker {
@@ -225,87 +292,83 @@
         }
 
         .nav-key {
-            background: var(--btn-grey);
+            background: linear-gradient(to bottom, #4a4a4a, #2a2a2a);
             border: none;
             cursor: pointer;
-            box-shadow: 0 5px 0 #1a1a1a, inset 0 2px 3px rgba(255, 255, 255, 0.1);
-            color: #ccc;
+            box-shadow:
+                0 6px 0 #000,
+                inset 0 2px 3px rgba(255, 255, 255, 0.1),
+                0 12px 25px rgba(0, 0, 0, 0.5);
+            color: #ddd;
             font-family: inherit;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.05s;
+            z-index: 10;
         }
 
         .btn-c {
-            width: 65px;
-            height: 45px;
+            width: 70px;
+            height: 48px;
             border-radius: 40% 10% 40% 10%;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: bold;
             color: #fff;
+            background: linear-gradient(135deg, #555, #333);
         }
 
         .btn-select {
-            height: 65px;
-            background: var(--nokia-silver);
+            height: 75px;
+            background: linear-gradient(to bottom, #fdfdfd, #bbb);
             border-radius: 35% 35% 50% 50%;
-            box-shadow: 0 6px 0 #777, inset 0 2px 4px #fff;
+            box-shadow: 0 8px 0 #777, inset 0 3px 6px #fff;
             border: 1px solid #aaa;
         }
 
-        .arrow-keys {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            align-items: center;
-        }
-
         .arrow-key {
-            width: 70px;
-            height: 35px;
+            width: 75px;
+            height: 40px;
             border-radius: 12px;
-            font-size: 1.2rem;
-        }
-
-        .num-pad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            padding: 0 25px;
+            font-size: 1.3rem;
         }
 
         .btn-num {
-            height: 48px;
-            background: var(--btn-grey);
+            height: 55px;
+            background: linear-gradient(to bottom, #444, #222);
             color: #fff;
-            border-radius: 24px;
-            border: none;
-            box-shadow: 0 5px 0 #1a1a1a, inset 0 1px 2px rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            border: 1px solid #1a1a1a;
+            box-shadow:
+                0 6px 0 #000,
+                inset 0 1px 2px rgba(255, 255, 255, 0.2),
+                0 10px 20px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             font-family: inherit;
             cursor: pointer;
+            font-size: 1.3rem;
         }
 
         .btn-num span {
-            font-size: 0.7rem;
-            color: #999;
+            font-size: 0.75rem;
+            color: #888;
             margin-top: -2px;
+            letter-spacing: 1px;
         }
 
         .nav-key:active,
         .btn-num:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #1a1a1a;
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #000;
         }
 
         .nav-key.active-glow,
         .btn-num.active-glow {
-            background: #555;
-            box-shadow: 0 0 15px gold;
+            background: #666;
+            box-shadow: 0 0 20px rgba(148, 175, 16, 0.4);
         }
 
         .ui-screen {
@@ -322,50 +385,55 @@
         }
 
         .nokia-hands-svg {
-            width: 180px;
-            height: 100px;
-            margin-bottom: 10px;
+            width: 220px;
+            height: 120px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
         }
 
         .hand-path {
             fill: var(--lcd-dark);
+            stroke: var(--lcd-dark);
+            stroke-width: 0.2px;
         }
 
         .hand-l {
-            transform: translateX(-100px);
-            animation: hand-meet-l 2.8s forwards cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translate(-150px, -20px);
+            animation: hand-meet-l 3s forwards cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .hand-r {
-            transform: translateX(100px);
-            animation: hand-meet-r 2.8s forwards cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translate(150px, 20px);
+            animation: hand-meet-r 3s forwards cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @keyframes hand-meet-l {
             to {
-                transform: translateX(0);
+                transform: translate(0, 0);
             }
         }
 
         @keyframes hand-meet-r {
             to {
-                transform: translateX(0);
+                transform: translate(0, 0);
             }
         }
 
         .logo-text {
             font-family: sans-serif;
             font-weight: 900;
-            font-size: 3rem;
-            letter-spacing: 6px;
+            font-size: 3.5rem;
+            letter-spacing: 14px;
             color: var(--lcd-dark);
             opacity: 0;
-            animation: fade-in 0.8s 2s forwards;
+            animation: fade-in 1s 2s forwards;
+            scale: 0.9;
         }
 
         @keyframes fade-in {
             to {
                 opacity: 1;
+                scale: 1;
             }
         }
 
@@ -406,103 +474,116 @@
 </head>
 
 <body>
-    <div class="nokia-3310">
-        <div class="speaker">
-            <div class="speaker-hole"></div>
-            <div class="speaker-hole"></div>
-            <div class="speaker-hole"></div>
-        </div>
+    <div class="phone-container">
+        <div class="phone-shadow"></div>
+        <div class="nokia-3310">
+            <div class="speaker">
+                <div class="speaker-hole"></div>
+                <div class="speaker-hole"></div>
+                <div class="speaker-hole"></div>
+            </div>
 
-        <div class="screen-bezel">
-            <div class="screen-glass">
-                <div id="gameArea">
-                    <!-- Splash Screen -->
-                    <div id="splashScreen" class="ui-screen active">
-                        <svg class="nokia-hands-svg" viewBox="0 0 200 100">
-                            <g class="hand-l">
-                                <path class="hand-path" d="M10 50 Q30 30 60 45 L90 55 L80 65 Q50 50 10 50 Z" />
-                                <path class="hand-path" d="M85 52 L95 45 Q100 40 105 45 L100 55 Z" />
-                            </g>
-                            <g class="hand-r">
-                                <path class="hand-path" d="M190 50 Q170 30 140 45 L110 55 L120 65 Q150 50 190 50 Z" />
-                                <path class="hand-path" d="M115 52 L105 45 Q100 40 95 45 L105 55 Z" />
-                            </g>
-                        </svg>
-                        <div class="logo-text">NOKIA</div>
-                    </div>
-
-                    <!-- Menu Screen -->
-                    <div id="menuScreen" class="ui-screen">
-                        <div class="menu-title">SNAKE II</div>
-                        <ul class="menu-options" id="menuList">
-                            <li class="selected" data-action="start">START GAME</li>
-                            <li data-action="level">LEVEL: <span id="levelVal">1</span></li>
-                            <li data-action="mode">MODE: <span id="modeVal">SOLID</span></li>
-                            <li data-action="highscore">HI-SCORE: <span id="menuHighScore">0</span></li>
-                        </ul>
-                    </div>
-
-                    <!-- Game Screen -->
-                    <div id="gamePlayScreen" class="ui-screen">
-                        <div id="pauseOverlay"
-                            style="display:none; position:absolute; top:45%; left:50%; transform:translate(-50%, -50%); background:var(--lcd-green); padding:5px 15px; border:2px solid var(--lcd-dark); z-index:100; font-weight:bold; font-size:1.5rem;">
-                            PAUSED</div>
-                        <div class="status-bar">
-                            <div class="status-icons">
-                                <div class="signal-icon">
-                                    <div class="signal-bar" style="height: 20%"></div>
-                                    <div class="signal-bar" style="height: 40%"></div>
-                                    <div class="signal-bar" style="height: 60%"></div>
-                                    <div class="signal-bar" style="height: 80%"></div>
-                                </div>
-                                <span id="levelName">SNAKE</span>
-                            </div>
-                            <div class="status-icons">
-                                <span id="scoreVal">0</span>
-                                <div class="battery-icon">
-                                    <div class="battery-fill"></div>
-                                </div>
-                            </div>
+            <div class="screen-bezel">
+                <div class="screen-glass">
+                    <div id="gameArea">
+                        <!-- Splash Screen -->
+                        <div id="splashScreen" class="ui-screen active">
+                            <svg class="nokia-hands-svg" viewBox="0 0 240 120">
+                                <!-- High-Detail Anatomical Left Hand -->
+                                <g class="hand-l">
+                                    <path class="hand-path"
+                                        d="M10 60 C30 40 70 35 100 55 L140 70 L125 85 C90 75 40 85 10 75 Z" />
+                                    <path class="hand-path" d="M100 55 C115 40 135 45 140 60 C145 75 130 85 115 80 Z" />
+                                    <path class="hand-path" d="M140 70 L170 80 C180 85 180 100 165 105 L140 95 Z" />
+                                    <path class="hand-path" d="M135 80 L165 92 C175 100 170 115 155 120 L130 108 Z" />
+                                    <path class="hand-path" d="M125 90 L150 105 C158 115 152 130 138 132 L118 115 Z" />
+                                </g>
+                                <!-- High-Detail Anatomical Right Hand -->
+                                <g class="hand-r">
+                                    <path class="hand-path"
+                                        d="M230 60 C210 40 170 35 140 55 L100 70 L115 85 C150 75 200 85 230 75 Z" />
+                                    <path class="hand-path" d="M140 55 C125 40 105 45 100 60 C95 75 110 85 125 80 Z" />
+                                    <path class="hand-path" d="M100 70 L70 80 C60 85 60 100 75 105 L100 95 Z" />
+                                    <path class="hand-path" d="M105 80 L75 92 C65 100 70 115 85 120 L110 108 Z" />
+                                    <path class="hand-path" d="M115 90 L90 105 C82 115 88 130 102 132 L122 115 Z" />
+                                </g>
+                            </svg>
+                            <div class="logo-text">NOKIA</div>
                         </div>
-                        <canvas id="gameCanvas"></canvas>
-                    </div>
 
-                    <!-- Game Over Screen -->
-                    <div id="gameOverScreen" class="ui-screen">
-                        <div id="recordLabel" class="record-banner">NEW RECORD!</div>
-                        <div class="game-over-title">GAME OVER</div>
-                        <div style="font-size: 1.8rem;">Score: <span id="finalScoreVal">0</span></div>
-                        <div style="margin-top: 15px; font-size: 1.3rem;">Press <span
-                                style="background:#000;color:#94af10;padding:0 4px;">5</span> to Retry</div>
+                        <!-- Menu Screen -->
+                        <div id="menuScreen" class="ui-screen">
+                            <div class="menu-title">SNAKE II</div>
+                            <ul class="menu-options" id="menuList">
+                                <li class="selected" data-action="start">START GAME</li>
+                                <li data-action="level">LEVEL: <span id="levelVal">1</span></li>
+                                <li data-action="mode">MODE: <span id="modeVal">SOLID</span></li>
+                                <li data-action="highscore">HI-SCORE: <span id="menuHighScore">0</span></li>
+                            </ul>
+                        </div>
+
+                        <!-- Game Screen -->
+                        <div id="gamePlayScreen" class="ui-screen">
+                            <div id="pauseOverlay"
+                                style="display:none; position:absolute; top:45%; left:50%; transform:translate(-50%, -50%); background:var(--lcd-green); padding:5px 15px; border:2px solid var(--lcd-dark); z-index:100; font-weight:bold; font-size:1.5rem;">
+                                PAUSED</div>
+                            <div class="status-bar">
+                                <div class="status-icons">
+                                    <div class="signal-icon">
+                                        <div class="signal-bar" style="height: 20%"></div>
+                                        <div class="signal-bar" style="height: 40%"></div>
+                                        <div class="signal-bar" style="height: 60%"></div>
+                                        <div class="signal-bar" style="height: 80%"></div>
+                                    </div>
+                                    <span id="levelName">SNAKE</span>
+                                </div>
+                                <div class="status-icons">
+                                    <span id="scoreVal">0</span>
+                                    <div class="battery-icon">
+                                        <div class="battery-fill"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <canvas id="gameCanvas"></canvas>
+                        </div>
+
+                        <!-- Game Over Screen -->
+                        <div id="gameOverScreen" class="ui-screen">
+                            <div id="recordLabel" class="record-banner">NEW RECORD!</div>
+                            <div class="game-over-title">GAME OVER</div>
+                            <div style="font-size: 1.8rem;">Score: <span id="finalScoreVal">0</span></div>
+                            <div style="margin-top: 15px; font-size: 1.3rem;">Press <span
+                                    style="background:#000;color:#94af10;padding:0 4px;">5</span> to Retry</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- AUTHENTIC KEYPAD -->
-        <div class="keypad-container">
-            <div class="nav-cluster">
-                <button class="nav-key btn-c" id="btnC">C</button>
-                <button class="nav-key btn-select" id="btnSelect"></button>
-                <div class="arrow-keys">
-                    <button class="nav-key arrow-key" id="btnUp">▲</button>
-                    <button class="nav-key arrow-key" id="btnDown">▼</button>
+            <!-- AUTHENTIC KEYPAD -->
+            <div class="keypad-container">
+                <div class="nav-cluster">
+                    <button class="nav-key btn-c" id="btnC">C</button>
+                    <button class="nav-key btn-select" id="btnSelect"></button>
+                    <div class="arrow-keys">
+                        <button class="nav-key arrow-key" id="btnUp">▲</button>
+                        <button class="nav-key arrow-key" id="btnDown">▼</button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="num-pad">
-                <button class="btn-num">1</button>
-                <button class="btn-num" id="num2">2 <span>abc</span></button>
-                <button class="btn-num">3 <span>def</span></button>
-                <button class="btn-num" id="num4">4 <span>ghi</span></button>
-                <button class="btn-num" id="num5">5 <span>jkl</span></button>
-                <button class="btn-num" id="num6">6 <span>mno</span></button>
-                <button class="btn-num">7 <span>pqrs</span></button>
-                <button class="btn-num" id="num8">8 <span>tuv</span></button>
-                <button class="btn-num">9 <span>wxyz</span></button>
-                <button class="btn-num" id="btnStar">*</button>
-                <button class="btn-num">0</button>
-                <button class="btn-num" id="btnHash">#</button>
+                <div class="num-pad">
+                    <button class="btn-num">1</button>
+                    <button class="btn-num" id="num2">2 <span>abc</span></button>
+                    <button class="btn-num">3 <span>def</span></button>
+                    <button class="btn-num" id="num4">4 <span>ghi</span></button>
+                    <button class="btn-num" id="num5">5 <span>jkl</span></button>
+                    <button class="btn-num" id="num6">6 <span>mno</span></button>
+                    <button class="btn-num">7 <span>pqrs</span></button>
+                    <button class="btn-num" id="num8">8 <span>tuv</span></button>
+                    <button class="btn-num">9 <span>wxyz</span></button>
+                    <button class="btn-num" id="btnStar">*</button>
+                    <button class="btn-num">0</button>
+                    <button class="btn-num" id="btnHash">#</button>
+                </div>
             </div>
         </div>
     </div>
