@@ -89,7 +89,43 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.3);
+            animation: lcd-flicker 8s infinite;
+        }
+
+        /* Screen Reflection */
+        .screen-glass::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%, rgba(0, 0, 0, 0.1) 100%);
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        @keyframes lcd-flicker {
+            0% {
+                opacity: 1;
+            }
+
+            48% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.98;
+            }
+
+            52% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         /* LCD Pixel Effect */
@@ -125,6 +161,48 @@
             padding-bottom: 2px;
             margin-bottom: 5px;
             font-weight: bold;
+        }
+
+        /* Status Bar Icons */
+        .status-icons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .battery-icon {
+            width: 15px;
+            height: 8px;
+            border: 1.5px solid var(--lcd-dark);
+            position: relative;
+        }
+
+        .battery-icon::after {
+            content: "";
+            position: absolute;
+            right: -3px;
+            top: 1px;
+            width: 2px;
+            height: 3px;
+            background: var(--lcd-dark);
+        }
+
+        .battery-fill {
+            height: 100%;
+            width: 80%;
+            background: var(--lcd-dark);
+        }
+
+        .signal-icon {
+            display: flex;
+            gap: 1.5px;
+            align-items: flex-end;
+            height: 8px;
+        }
+
+        .signal-bar {
+            width: 2px;
+            background: var(--lcd-dark);
         }
 
         canvas {
@@ -194,6 +272,13 @@
             box-shadow: 0 2px 0 #888;
         }
 
+        /* Keypad Glow */
+        .btn.active-glow {
+            background: var(--btn-light);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            color: #fff;
+        }
+
         /* Splash Screen & Hands */
         .nokia-hands {
             position: relative;
@@ -226,21 +311,25 @@
 
         @keyframes hand-in-left {
             0% {
-                left: -50px;
+                left: -60px;
+                transform: rotate(45deg);
             }
 
             100% {
                 left: 10px;
+                transform: rotate(10deg);
             }
         }
 
         @keyframes hand-in-right {
             0% {
-                right: -50px;
+                right: -60px;
+                transform: rotate(-45deg);
             }
 
             100% {
                 right: 10px;
+                transform: rotate(-10deg);
             }
         }
 
@@ -348,24 +437,44 @@
                         <div class="menu-title">SNAKE II</div>
                         <ul class="menu-options" id="menuList">
                             <li class="selected" data-action="start">START GAME</li>
-                            <li data-action="highscore">HIGH SCORE: <span id="menuHighScore">0</span></li>
+                            <li data-action="settings">WALLS: <span id="wallState">ON</span></li>
+                            <li data-action="highscore">HI-SCORE: <span id="menuHighScore">0</span></li>
                         </ul>
                     </div>
 
                     <!-- Game Screen -->
                     <div id="gamePlayScreen" class="ui-screen">
+                        <div id="pauseOverlay"
+                            style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:var(--lcd-green); padding:5px; border:2px solid var(--lcd-dark); z-index:100; font-weight:bold;">
+                            PAUSED</div>
                         <div class="status-bar">
-                            <span id="scoreVal">0</span>
-                            <span id="levelName">SNAKE</span>
+                            <div class="status-icons">
+                                <div class="signal-icon">
+                                    <div class="signal-bar" style="height: 20%"></div>
+                                    <div class="signal-bar" style="height: 40%"></div>
+                                    <div class="signal-bar" style="height: 60%"></div>
+                                    <div class="signal-bar" style="height: 80%"></div>
+                                </div>
+                                <span id="levelName">SNAKE</span>
+                            </div>
+                            <div class="status-icons">
+                                <span id="scoreVal">0</span>
+                                <div class="battery-icon">
+                                    <div class="battery-fill"></div>
+                                </div>
+                            </div>
                         </div>
                         <canvas id="gameCanvas"></canvas>
                     </div>
 
                     <!-- Game Over Screen -->
                     <div id="gameOverScreen" class="ui-screen">
+                        <div id="recordLabel"
+                            style="display:none; color:var(--lcd-dark); background:var(--lcd-green); font-weight:bold; font-size:1.2rem; margin-bottom:5px;">
+                            ! NEW RECORD !</div>
                         <div class="game-over-title">GAME OVER</div>
                         <div class="score-display">Score: <span id="finalScoreVal">0</span></div>
-                        <div style="margin-top: 10px; font-size: 1.2rem;">Try Again?</div>
+                        <div style="margin-top: 10px; font-size: 1.2rem;">Press 5 to Retry</div>
                     </div>
                 </div>
             </div>
@@ -390,9 +499,9 @@
             <button class="btn">7 <span>pqrs</span></button>
             <button class="btn" id="num8">8 <span>tuv</span></button>
             <button class="btn">9 <span>wxyz</span></button>
-            <button class="btn">*</button>
+            <button class="btn" id="btnStar">*</button>
             <button class="btn">0</button>
-            <button class="btn">#</button>
+            <button class="btn" id="btnHash">#</button>
         </div>
     </div>
 
@@ -427,7 +536,15 @@
                 playTone(440, 'square', 0.2, 0.1);
                 setTimeout(() => playTone(220, 'square', 0.4, 0.1), 200);
             },
-            click: () => playTone(600, 'square', 0.05, 0.05)
+            click: () => playTone(600, 'square', 0.05, 0.05),
+            start: () => {
+                const notes = [440, 493, 523, 587, 659];
+                notes.forEach((n, i) => setTimeout(() => playTone(n, 'square', 0.15, 0.05), i * 150));
+            },
+            record: () => {
+                const notes = [523, 659, 783, 1046];
+                notes.forEach((n, i) => setTimeout(() => playTone(n, 'square', 0.1, 0.05), i * 100));
+            }
         };
 
         // Game Constants
@@ -441,6 +558,8 @@
         let nextDir = { x: 1, y: 0 };
         let score = 0;
         let gameRunning = false;
+        let isPaused = false;
+        let wallMode = true;
         let gameLoop = null;
         let speed = 150;
         let highScore = localStorage.getItem('nokiaHighScore') || 0;
@@ -458,8 +577,11 @@
 
         // Auto transition from splash to menu
         setTimeout(() => {
-            if (currentScreen === 'splash') showScreen('menuScreen');
-        }, 4000);
+            if (currentScreen === 'splashScreen') {
+                sounds.start();
+                showScreen('menuScreen');
+            }
+        }, 3200);
 
         function showScreen(id) {
             if (id === 'menuScreen') {
@@ -476,7 +598,19 @@
         function handleInput(key) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
 
+            // Visual button feedback
+            const btnMap = { 'ArrowUp': 'btnUp', 'ArrowDown': 'btnDown', 'ArrowLeft': 'btnLeft', 'ArrowRight': 'btnRight', '5': 'num5', '2': 'num2', '4': 'num4', '6': 'num6', '8': 'num8' };
+            const btnId = btnMap[key];
+            if (btnId) {
+                const el = document.getElementById(btnId);
+                if (el) {
+                    el.classList.add('active-glow');
+                    setTimeout(() => el.classList.remove('active-glow'), 100);
+                }
+            }
+
             if (currentScreen === 'splashScreen') {
+                sounds.start();
                 showScreen('menuScreen');
                 return;
             }
@@ -485,16 +619,29 @@
                 if (key === 'ArrowUp' || key === 'ArrowDown') {
                     sounds.click();
                     const items = document.querySelectorAll('#menuList li');
-                    items.forEach(i => i.classList.toggle('selected'));
+                    const selected = document.querySelector('#menuList li.selected');
+                    selected.classList.remove('selected');
+                    if (key === 'ArrowUp') (selected.previousElementSibling || items[items.length - 1]).classList.add('selected');
+                    else (selected.nextElementSibling || items[0]).classList.add('selected');
                 }
                 if (key === 'Enter' || key === '5' || key === ' ') {
                     sounds.click();
                     const selected = document.querySelector('#menuList li.selected');
                     if (selected.dataset.action === 'start') {
                         initGame();
+                    } else if (selected.dataset.action === 'settings') {
+                        wallMode = !wallMode;
+                        document.getElementById('wallState').textContent = wallMode ? 'ON' : 'OFF';
                     }
                 }
             } else if (currentScreen === 'gamePlayScreen') {
+                if (key === '#' || key === '*' || key === 'p') {
+                    isPaused = !isPaused;
+                    document.getElementById('pauseOverlay').style.display = isPaused ? 'block' : 'none';
+                    sounds.click();
+                    return;
+                }
+                if (isPaused) return;
                 if (key === 'ArrowUp' && dir.y === 0) nextDir = { x: 0, y: -1 };
                 if (key === 'ArrowDown' && dir.y === 0) nextDir = { x: 0, y: 1 };
                 if (key === 'ArrowLeft' && dir.x === 0) nextDir = { x: -1, y: 0 };
@@ -526,10 +673,19 @@
         bindBtn('num4', 'ArrowLeft');
         bindBtn('num6', 'ArrowRight');
         bindBtn('num8', 'ArrowDown');
+        bindBtn('btnHash', '#');
+        bindBtn('btnStar', '*');
 
         document.querySelectorAll('.btn').forEach(b => {
             b.addEventListener('mousedown', () => sounds.click());
         });
+
+        // Signal/Battery Simulation
+        setInterval(() => {
+            const bars = document.querySelectorAll('.signal-bar');
+            const down = Math.random() > 0.8;
+            bars.forEach((b, i) => b.style.opacity = (down && i > 1) ? '0.2' : '1');
+        }, 3000);
 
         function spawnFood() {
             let valid = false;
@@ -545,6 +701,8 @@
         function initGame() {
             score = 0;
             scoreEl.textContent = '0';
+            isPaused = false;
+            document.getElementById('pauseOverlay').style.display = 'none';
             dir = { x: 1, y: 0 };
             nextDir = { x: 1, y: 0 };
             snake = [
@@ -564,7 +722,7 @@
 
             const delta = timestamp - lastTime;
             if (delta > speed) {
-                update();
+                if (!isPaused) update();
                 draw();
                 lastTime = timestamp;
             }
@@ -577,7 +735,12 @@
 
             // Collision checks
             if (head.x < 0 || head.x >= gridW || head.y < 0 || head.y >= gridH) {
-                return die();
+                if (!wallMode) {
+                    if (head.x < 0) head.x = gridW - 1; else if (head.x >= gridW) head.x = 0;
+                    if (head.y < 0) head.y = gridH - 1; else if (head.y >= gridH) head.y = 0;
+                } else {
+                    return die();
+                }
             }
             if (snake.some(s => s.x === head.x && s.y === head.y)) {
                 return die();
@@ -588,11 +751,15 @@
                 score += (9 + Math.floor(score / 100)); // Bonus points as score grows
                 scoreEl.textContent = score;
                 if (score > highScore) {
+                    if (highScore > 0 && score <= highScore + 10) sounds.record(); // Only play jingle once when record is broken
                     highScore = score;
                     localStorage.setItem('nokiaHighScore', highScore);
                 }
                 sounds.eat();
                 spawnFood();
+                // Battery drain simulation
+                if (score > 100) document.querySelector('.battery-fill').style.width = '60%';
+                if (score > 300) document.querySelector('.battery-fill').style.width = '30%';
                 // Increase speed slightly
                 if (speed > 60) speed -= 2;
             } else {
@@ -604,14 +771,18 @@
             gameRunning = false;
             sounds.die();
             finalScoreVal.textContent = score;
+            const isNewRecord = (score > 0 && score >= highScore);
+            document.getElementById('recordLabel').style.display = isNewRecord ? 'block' : 'none';
             setTimeout(() => showScreen('gameOverScreen'), 1000);
         }
 
         function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Authentic LCD Ghosting: We don't clear fully, creating a trail
+            ctx.fillStyle = 'rgba(148, 175, 16, 0.4)'; // LCD background with alpha
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Draw Food (Classic Pixel Cross)
-            ctx.fillStyle = '#2b3a1a';
+            ctx.fillStyle = 'rgba(43, 58, 26, 0.8)';
             const fx = food.x * pixelSize;
             const fy = food.y * pixelSize;
             ctx.fillRect(fx + 1, fy, 2, 1);
@@ -624,9 +795,10 @@
                 const sy = p.y * pixelSize;
 
                 if (i === 0) {
+                    ctx.fillStyle = '#2b3a1a';
                     // Head with "eyes"
                     ctx.fillRect(sx, sy, pixelSize, pixelSize);
-                    ctx.fillStyle = '#94af10'; // LCD background color for eyes
+                    ctx.fillStyle = '#94af10';
                     if (dir.x !== 0) {
                         ctx.fillRect(sx + 2, sy, 1, 1);
                         ctx.fillRect(sx + 2, sy + 3, 1, 1);
@@ -634,9 +806,9 @@
                         ctx.fillRect(sx, sy + 2, 1, 1);
                         ctx.fillRect(sx + 3, sy + 2, 1, 1);
                     }
-                    ctx.fillStyle = '#2b3a1a';
                 } else {
-                    // Body block with a tiny gap
+                    // Body block - slightly more transparent for that LCD blur
+                    ctx.fillStyle = `rgba(43, 58, 26, ${Math.max(0.4, 1 - i * 0.05)})`;
                     ctx.fillRect(sx + 0.5, sy + 0.5, pixelSize - 1, pixelSize - 1);
                 }
             });
