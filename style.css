@@ -1,0 +1,313 @@
+/*
+  Reset & Base styles
+*/
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none; /* Prevent text selection on buttons */
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: #121212;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'VT323', monospace; /* Classic pixel font */
+    overflow: hidden; /* Prevent scrolling */
+}
+
+/*
+  Viewport scaling for mobile/desktop
+  We'll use a responsive scaling container.
+*/
+.viewport-wrapper {
+    /* Base scaling setup - will adjust based on screen size */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    perspective: 1000px; /* 3D perspective context */
+}
+
+/*
+  3D Phone Model - The Nokia 3310 Shell
+*/
+.phone-model {
+    width: 320px;
+    height: 650px;
+    background: linear-gradient(145deg, #1f2b3e, #131b26); /* Classic Navy Blue/Grey */
+    border-radius: 40px 40px 90px 90px; /* Wider bottom, slightly tapered top */
+    padding: 20px 25px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    /* 3D transforms */
+    transform-style: preserve-3d;
+    box-shadow:
+        0 30px 60px rgba(0,0,0,0.8), /* Soft drop shadow */
+        inset 0 4px 10px rgba(255, 255, 255, 0.1), /* Top highlight */
+        inset 0 -15px 30px rgba(0,0,0,0.5), /* Bottom depth */
+        -10px 10px 20px #0a0d13; /* Bevel shadow */
+
+    border: 1px solid #2a3b53;
+    position: relative;
+    transform: rotateX(5deg) rotateY(-5deg) translateZ(0); /* Subtle initial 3D tilt */
+}
+
+/* Speaker Grill */
+.speaker-grill {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    margin-top: 10px;
+    transform: translateZ(5px);
+}
+
+.speaker-grill .hole {
+    width: 4px;
+    height: 18px;
+    background-color: #0d121a;
+    border-radius: 2px;
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.8);
+}
+
+/* Screen Bezel (Outer grey/silver area) */
+.screen-bezel {
+    width: 100%;
+    height: 230px;
+    background: #1b1e23;
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* Raised outer bezel */
+    box-shadow:
+        inset 0px 3px 5px rgba(0,0,0,0.5),
+        0 4px 8px rgba(0,0,0,0.4),
+        0 -1px 2px rgba(255,255,255,0.1);
+
+    border: 2px solid #282d34;
+    transform: translateZ(10px);
+    margin-bottom: 10px;
+}
+
+/* The actual LCD Screen */
+.lcd-screen {
+    width: 100%;
+    height: 100%;
+    background-color: #879b29; /* Classic Nokia green/yellow */
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+
+    /* Inset screen panel */
+    box-shadow:
+        inset 2px 2px 10px rgba(0,0,0,0.6), /* Inner shadow */
+        inset -1px -1px 4px rgba(255,255,255,0.2); /* Slight bottom highlight */
+
+    /* Subtler backlight glow */
+    box-shadow: inset 0 0 40px rgba(135, 155, 41, 0.4), inset 2px 2px 10px rgba(0,0,0,0.6);
+}
+
+/* Subtle grid pattern / low-res matrix effect */
+.lcd-screen::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+        linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 3px 3px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.screen-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Game Canvas */
+#game-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    /* Pixelated rendering for crisp edges */
+    image-rendering: pixelated;
+    z-index: 2;
+}
+
+/* UI Overlays */
+.ui-layer {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 5;
+    color: #1a2305; /* Very dark green/black for LCD text */
+    text-shadow: 1px 1px 0px rgba(135, 155, 41, 0.5); /* Slight LCD glow */
+}
+
+.overlay-hidden {
+    display: none !important;
+}
+
+#ui-score-layer {
+    justify-content: flex-start;
+    align-items: flex-end;
+    padding: 2px 4px;
+    font-size: 18px;
+    z-index: 4; /* Below other overlays but above canvas */
+}
+
+.game-over-text, .start-text, .pause-text {
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1;
+}
+
+.restart-prompt {
+    font-size: 16px;
+    margin-top: 10px;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Nokia Brand Text */
+.nokia-brand {
+    font-family: Arial, sans-serif;
+    font-weight: 900;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: #4a5d73;
+    margin-bottom: 15px;
+    transform: translateZ(5px);
+    text-shadow: -1px -1px 0 rgba(0,0,0,0.5), 1px 1px 0 rgba(255,255,255,0.1);
+}
+
+/* Keys and Layout */
+.nav-keys {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 0 10px;
+    transform-style: preserve-3d;
+}
+
+.numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px 20px;
+    width: 100%;
+    padding: 0 10px;
+    transform-style: preserve-3d;
+}
+
+/* Base Key Styles */
+.key {
+    background: linear-gradient(to bottom, #dcdedf, #949ca5); /* Silver/grey plastic */
+    border: none;
+    border-radius: 12px 12px 16px 16px; /* Pill-like shape */
+    color: #1a2332;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+    cursor: pointer;
+    position: relative;
+    outline: none;
+
+    /* 3D Structure - Raised off the phone surface */
+    transform: translateZ(15px);
+    box-shadow:
+        0 4px 0 #5c6670, /* The actual 3D thickness of the button */
+        0 8px 10px rgba(0,0,0,0.4), /* Drop shadow on the phone */
+        inset 0 2px 4px rgba(255,255,255,0.6); /* Top highlight */
+
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+}
+
+/* Pressed State */
+.key:active, .key.active-press {
+    /* Push down into the Z-axis (visually by moving Y and shrinking the shadow) */
+    transform: translateZ(15px) translateY(4px);
+    box-shadow:
+        0 0px 0 #5c6670, /* Eliminate the thickness */
+        0 2px 4px rgba(0,0,0,0.4), /* Reduced drop shadow */
+        inset 0 2px 4px rgba(255,255,255,0.6), /* Keep highlight */
+        inset 0 4px 8px rgba(0,0,0,0.2); /* Add inner shadow to look pressed in */
+}
+
+/* Specific Key Sizing */
+.soft-key {
+    width: 60px;
+    height: 35px;
+    font-size: 16px;
+    border-radius: 20px 20px 10px 10px;
+    background: linear-gradient(to bottom, #c6cbd1, #848f9a);
+}
+
+.nav-up-down {
+    width: 45px;
+    height: 35px;
+    font-size: 18px;
+    background: linear-gradient(to bottom, #c6cbd1, #848f9a);
+}
+
+.num-key {
+    height: 45px;
+    padding-top: 5px;
+}
+
+.num-key .sub {
+    font-size: 10px;
+    font-weight: normal;
+    margin-top: 2px;
+    color: #4a5d73;
+}
+
+.num-key.symbol {
+    font-size: 24px;
+    padding-top: 0;
+}
+
+/* Movement specific keys highlight (2, 4, 6, 8) */
+.num-key[data-key="2"],
+.num-key[data-key="4"],
+.num-key[data-key="6"],
+.num-key[data-key="8"] {
+    /* Optional: Subtle indicator these are movement keys */
+    /* text-shadow: 0 0 5px rgba(255,255,255,0.5); */
+}
+
+/* Responsive adjustments */
+@media (max-width: 400px), (max-height: 700px) {
+    .viewport-wrapper {
+        /* Scale down the whole phone to fit in small screens */
+        transform: scale(min(calc(100vw / 360), calc(100vh / 700)));
+    }
+}
